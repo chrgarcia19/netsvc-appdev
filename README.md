@@ -4,7 +4,7 @@ This repo will contain code, assignments, and possibly notes for the network svc
 
 ## Code formatting
 
-Java code will be formatted using clang-format with llvm styling.
+C and Java code will be formatted using clang-format with llvm styling.
 
 ```bash
 clang-format -style=llvm <filename_goes_here.java>
