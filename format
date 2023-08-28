@@ -1,0 +1,6 @@
+#!/bin/sh -x
+
+for ft in c; do
+	find . -type f -name *."$ft" | 
+		xargs clang-format -style=llvm -i
+done
