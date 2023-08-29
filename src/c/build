@@ -1,0 +1,3 @@
+#!/bin/sh
+clang my_server.c -Wall -Wextra -pedantic -g -lpthread -o server
+clang my_interface.c -Wall -Wextra -pedantic -g -lpthread -o interface

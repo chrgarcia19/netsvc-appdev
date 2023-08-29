@@ -1,0 +1,3 @@
+#!/bin/sh
+clang -std=c11 my_server.c -Wall -Wextra -pedantic -g -lpthread -o server
+clang -stc=c11 my_interface.c -Wall -Wextra -pedantic -g -lpthread -o interface
