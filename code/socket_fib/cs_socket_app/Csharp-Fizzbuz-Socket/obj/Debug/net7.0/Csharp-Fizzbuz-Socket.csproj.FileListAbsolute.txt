@@ -1,0 +1,15 @@
+C:\Users\matde\source\repos\Csharp-Fizzbuz-Socket\bin\Debug\net7.0\Csharp-Fizzbuz-Socket.exe
+C:\Users\matde\source\repos\Csharp-Fizzbuz-Socket\bin\Debug\net7.0\Csharp-Fizzbuz-Socket.deps.json
+C:\Users\matde\source\repos\Csharp-Fizzbuz-Socket\bin\Debug\net7.0\Csharp-Fizzbuz-Socket.runtimeconfig.json
+C:\Users\matde\source\repos\Csharp-Fizzbuz-Socket\bin\Debug\net7.0\Csharp-Fizzbuz-Socket.dll
+C:\Users\matde\source\repos\Csharp-Fizzbuz-Socket\bin\Debug\net7.0\Csharp-Fizzbuz-Socket.pdb
+C:\Users\matde\source\repos\Csharp-Fizzbuz-Socket\obj\Debug\net7.0\Csharp-Fizzbuz-Socket.csproj.AssemblyReference.cache
+C:\Users\matde\source\repos\Csharp-Fizzbuz-Socket\obj\Debug\net7.0\Csharp-Fizzbuz-Socket.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\matde\source\repos\Csharp-Fizzbuz-Socket\obj\Debug\net7.0\Csharp-Fizzbuz-Socket.AssemblyInfoInputs.cache
+C:\Users\matde\source\repos\Csharp-Fizzbuz-Socket\obj\Debug\net7.0\Csharp-Fizzbuz-Socket.AssemblyInfo.cs
+C:\Users\matde\source\repos\Csharp-Fizzbuz-Socket\obj\Debug\net7.0\Csharp-Fizzbuz-Socket.csproj.CoreCompileInputs.cache
+C:\Users\matde\source\repos\Csharp-Fizzbuz-Socket\obj\Debug\net7.0\Csharp-Fizzbuz-Socket.dll
+C:\Users\matde\source\repos\Csharp-Fizzbuz-Socket\obj\Debug\net7.0\refint\Csharp-Fizzbuz-Socket.dll
+C:\Users\matde\source\repos\Csharp-Fizzbuz-Socket\obj\Debug\net7.0\Csharp-Fizzbuz-Socket.pdb
+C:\Users\matde\source\repos\Csharp-Fizzbuz-Socket\obj\Debug\net7.0\Csharp-Fizzbuz-Socket.genruntimeconfig.cache
+C:\Users\matde\source\repos\Csharp-Fizzbuz-Socket\obj\Debug\net7.0\ref\Csharp-Fizzbuz-Socket.dll

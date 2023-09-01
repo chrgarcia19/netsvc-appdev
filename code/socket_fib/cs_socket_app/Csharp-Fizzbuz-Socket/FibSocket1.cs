@@ -17,11 +17,6 @@ namespace Server
         // Main Method
         static void Main(string[] args)
         {
-            ExecuteServer();
-        }
-
-        public static void ExecuteServer()
-        {
             // Establish the local endpoint
             // for the socket. Dns.GetHostName
             // returns the name of the host
