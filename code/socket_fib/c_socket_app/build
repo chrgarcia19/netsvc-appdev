@@ -1,3 +1,3 @@
 #!/bin/sh
 clang server.c -std=c11 -Wall -Wextra -pedantic -g -o server
-clang interface.c -std=c11 -Wall -Wextra -pedantic -g -o interface
+clang client.c -std=c11 -Wall -Wextra -pedantic -g -o client 
