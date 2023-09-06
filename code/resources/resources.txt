@@ -1,5 +1,6 @@
 ### socket-socket fibonacci app ###
 
 https://marketsplash.com/tutorials/cpp/cplusplus-scoket/#link5
+https://stackoverflow.com/questions/9140409/transfer-integer-over-a-socket-in-c
 
 ### ###

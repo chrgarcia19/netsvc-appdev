@@ -1,40 +1,48 @@
-#include <sys/socket.h>
-#include <netinet/in.h>
-#include <iostream>
-#include <unistd.h>
 #include "fibonacci.h"
 #include <cstring>
+#include <iostream>
+#include <netinet/in.h>
+#include <sys/socket.h>
+#include <unistd.h>
 
-#define PORTNUM 4203
+#define PORTNUM 4204
 
-int main(){
-    int socket_s, socket_c;
-    sockaddr_in server_addr, client_addr;
-    socklen_t client_len;
+int main() {
+  int socket_s, socket_c, fib_num, received_num;
+  sockaddr_in server_addr, client_addr;
+  socklen_t client_len;
 
-    socket_s = socket(AF_INET, SOCK_STREAM, 0);
+  fib_num = 5;
+  received_num = 0;
 
-    server_addr.sin_family = AF_INET;
-    server_addr.sin_port = htons(PORTNUM);
-    server_addr.sin_addr.s_addr = INADDR_ANY;
+  socket_s = socket(AF_INET, SOCK_STREAM, 0);
 
-    bind(socket_s, (struct sockaddr *)&server_addr, sizeof(server_addr));
-    listen(socket_s, 5);
+  server_addr.sin_family = AF_INET;
+  server_addr.sin_port = htons(PORTNUM);
+  server_addr.sin_addr.s_addr = INADDR_ANY;
 
-    std::cout << "Server is listening on port 4203" << std::endl;
+  bind(socket_s, (struct sockaddr *)&server_addr, sizeof(server_addr));
+  listen(socket_s, 5);
 
-    client_len = sizeof(client_addr);
-    socket_c = accept(socket_s, (struct sockaddr*)&client_addr, &client_len);
+  std::cout << "Server is listening on port " << PORTNUM << std::endl;
 
-    char buffer[1024] = {0};
-    read(socket_c, buffer, sizeof(buffer));
+  client_len = sizeof(client_addr);
+  socket_c = accept(socket_s, (struct sockaddr *)&client_addr, &client_len);
 
-    std::cout << "Received: " << buffer << std::endl;
+  int send_fib_num = htonl(fib_num);
+  write(socket_c, &send_fib_num, sizeof(send_fib_num));
 
-    send(socket_c, buffer, strlen(buffer), 0);
+  int send_num = htonl(fibonacci(fib_num));
+  write(socket_c, &send_num, sizeof(send_num));
 
-    close(socket_c);
-    close(socket_s);
+  read(socket_c, &received_num, sizeof(received_num));
+  received_num = ntohl(received_num);
 
-    return 0;
+  std::cout << "Client replied with fibonacci result: " << received_num
+            << std::endl;
+
+  close(socket_c);
+  close(socket_s);
+
+  return 0;
 }
