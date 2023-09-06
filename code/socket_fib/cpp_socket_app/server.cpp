@@ -8,12 +8,12 @@
 #define PORTNUM 4204
 
 int main() {
-  int socket_s, socket_c, fib_num, received_num;
+  int socket_s, socket_c, fib_num, send_fib_num, send_num, received_num;
   sockaddr_in server_addr, client_addr;
   socklen_t client_len;
 
   fib_num = 5;
-  received_num = 0;
+  send_num, send_fib_num, received_num = 0;
 
   socket_s = socket(AF_INET, SOCK_STREAM, 0);
 
@@ -29,12 +29,15 @@ int main() {
   client_len = sizeof(client_addr);
   socket_c = accept(socket_s, (struct sockaddr *)&client_addr, &client_len);
 
-  int send_fib_num = htonl(fib_num);
+  //sending the input of the fibonacci function to the client
+  send_fib_num = htonl(fib_num);
   write(socket_c, &send_fib_num, sizeof(send_fib_num));
 
-  int send_num = htonl(fibonacci(fib_num));
+  //sending the result of the fibonacci function to the client
+  send_num = htonl(fibonacci(fib_num));
   write(socket_c, &send_num, sizeof(send_num));
 
+  //receiving the result of the fibonacci function from the client
   read(socket_c, &received_num, sizeof(received_num));
   received_num = ntohl(received_num);
 
