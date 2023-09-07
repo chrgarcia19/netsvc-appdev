@@ -1,0 +1,15 @@
+C:\Users\matde\OneDrive\Documents\GitHub\netsvc-appdev\code\socket_fib\cs_socket_app\CS-FibSocketSender\bin\Debug\net7.0\CS-FibSocketSender.exe
+C:\Users\matde\OneDrive\Documents\GitHub\netsvc-appdev\code\socket_fib\cs_socket_app\CS-FibSocketSender\bin\Debug\net7.0\CS-FibSocketSender.deps.json
+C:\Users\matde\OneDrive\Documents\GitHub\netsvc-appdev\code\socket_fib\cs_socket_app\CS-FibSocketSender\bin\Debug\net7.0\CS-FibSocketSender.runtimeconfig.json
+C:\Users\matde\OneDrive\Documents\GitHub\netsvc-appdev\code\socket_fib\cs_socket_app\CS-FibSocketSender\bin\Debug\net7.0\CS-FibSocketSender.dll
+C:\Users\matde\OneDrive\Documents\GitHub\netsvc-appdev\code\socket_fib\cs_socket_app\CS-FibSocketSender\bin\Debug\net7.0\CS-FibSocketSender.pdb
+C:\Users\matde\OneDrive\Documents\GitHub\netsvc-appdev\code\socket_fib\cs_socket_app\CS-FibSocketSender\obj\Debug\net7.0\CS-FibSocketSender.csproj.AssemblyReference.cache
+C:\Users\matde\OneDrive\Documents\GitHub\netsvc-appdev\code\socket_fib\cs_socket_app\CS-FibSocketSender\obj\Debug\net7.0\CS-FibSocketSender.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\matde\OneDrive\Documents\GitHub\netsvc-appdev\code\socket_fib\cs_socket_app\CS-FibSocketSender\obj\Debug\net7.0\CS-FibSocketSender.AssemblyInfoInputs.cache
+C:\Users\matde\OneDrive\Documents\GitHub\netsvc-appdev\code\socket_fib\cs_socket_app\CS-FibSocketSender\obj\Debug\net7.0\CS-FibSocketSender.AssemblyInfo.cs
+C:\Users\matde\OneDrive\Documents\GitHub\netsvc-appdev\code\socket_fib\cs_socket_app\CS-FibSocketSender\obj\Debug\net7.0\CS-FibSocketSender.csproj.CoreCompileInputs.cache
+C:\Users\matde\OneDrive\Documents\GitHub\netsvc-appdev\code\socket_fib\cs_socket_app\CS-FibSocketSender\obj\Debug\net7.0\CS-FibSocketSender.dll
+C:\Users\matde\OneDrive\Documents\GitHub\netsvc-appdev\code\socket_fib\cs_socket_app\CS-FibSocketSender\obj\Debug\net7.0\refint\CS-FibSocketSender.dll
+C:\Users\matde\OneDrive\Documents\GitHub\netsvc-appdev\code\socket_fib\cs_socket_app\CS-FibSocketSender\obj\Debug\net7.0\CS-FibSocketSender.pdb
+C:\Users\matde\OneDrive\Documents\GitHub\netsvc-appdev\code\socket_fib\cs_socket_app\CS-FibSocketSender\obj\Debug\net7.0\CS-FibSocketSender.genruntimeconfig.cache
+C:\Users\matde\OneDrive\Documents\GitHub\netsvc-appdev\code\socket_fib\cs_socket_app\CS-FibSocketSender\obj\Debug\net7.0\ref\CS-FibSocketSender.dll

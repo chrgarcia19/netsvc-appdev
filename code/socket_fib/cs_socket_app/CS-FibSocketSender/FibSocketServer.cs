@@ -7,7 +7,7 @@ using System.Text;
 namespace Client
 {
 
-    class FibSocket2
+    class FibSocketServer
     {
 
         // Main Method

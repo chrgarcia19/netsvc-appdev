@@ -11,7 +11,7 @@ using System.Reflection;
 namespace Server
 {
 
-    class FibSocket1
+    class FibSocketClienClient
     {
 
         // Main Method
