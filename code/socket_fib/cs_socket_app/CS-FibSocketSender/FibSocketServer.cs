@@ -17,9 +17,7 @@ namespace Client
             {
 
                 // Establish the remote endpoint
-                // for the socket. This example
-                // uses port 11111 on the local
-                // computer.
+                // for the socket. 
                 IPHostEntry ipHost = Dns.GetHostEntry(Dns.GetHostName());
                 IPAddress ipAddr = ipHost.AddressList[0];
                 IPEndPoint localEndPoint = new IPEndPoint(ipAddr, 4200);
