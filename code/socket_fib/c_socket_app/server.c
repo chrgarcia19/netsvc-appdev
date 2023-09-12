@@ -2,24 +2,20 @@
 #include <stdlib.h>
 #include <unistd.h>
 #include <strings.h>
+// Networking includes
 #include <sys/socket.h>
 #include <netinet/in.h>
-
-#define DEBUG_STATEMENTS 0
+// Macros
+#define DEBUG_STATEMENTS 1
 #define START_PORT_RANGE 4200
 #define END_PORT_RANGE	 4300
+// Personal headers
+#include "err_checking.h"
+#include "fibonacci.h"
 // comparison functions to pass into func_err_check
 int equal_to    (int a, int b){ return a == b; }
 int less_than   (int a, int b){ return a < b;  }
 int not_equal_to(int a, int b){ return a != b; }
-// takes in error message to print if failed and received and expected return values as well as comparison to perform on the two
-void func_err_check(const char* ERR_MSG, int ret_val, int (*compare)(int, int), int expected_val){
-	if(compare(ret_val, expected_val)){
-		fprintf(stderr, "[ERROR] %s\n", ERR_MSG);
-		if(DEBUG_STATEMENTS) printf("[DEBUG] Error code: %d\n", ret_val);
-		exit(EXIT_FAILURE);
-	}
-}
 
 int main(int argc, char **argv){
 	int port;
@@ -42,13 +38,14 @@ int main(int argc, char **argv){
 		exit(EXIT_FAILURE);
 	}
 	// declare rest of variables now that we know the program didn't die
-	int err_code, is_connected;
-	int server_socket, client_socket;
+	int err_code;
+	unsigned long fib_index;
+	int server_socket = 0, client_socket = 0;
 	struct sockaddr_in server_addr, client_addr;
-	socklen_t client_addr_len;
+	socklen_t client_addr_len = sizeof(client_addr);
 	// creating socket
 	func_err_check(
-		"Creating the socket failed!", 
+		"Creating the server socket failed!", 
 		(server_socket = socket(AF_INET, SOCK_STREAM, 0)),
 		&less_than,
 		0
@@ -70,17 +67,19 @@ int main(int argc, char **argv){
 		&less_than,
 		0
 	);
-	// listening on the socket for a connection
+	// listening on the socket for a connection; blocking I think
 	func_err_check(
 		"Listening on the socket failed!",
 		listen(server_socket, 1),	// listen for only a single connection
 		&less_than,
 		0
 	);
-
+	if(DEBUG_STATEMENTS)
+		printf("Server listening on port %d\n", port);
+	// accept incoming connection(s)
 	func_err_check(
 		"Accepting the socket failed!",
-		err_code = accept(
+		client_socket = accept(
 			server_socket,
 			(struct sockaddr*)&client_addr,
 			&client_addr_len
@@ -88,9 +87,42 @@ int main(int argc, char **argv){
 		&less_than,
 		0
 	);
+	// reading the first index to start at
+	read(client_socket, &fib_index, sizeof(fib_index));
+	fib_index = ntohl(fib_index);
+	printf("[LOG] Starting at fibonacci index %lu\n", fib_index);
 	
-	// Doing the fibonacci stuff here
+	unsigned long send_index, send_result;
+	unsigned long receive_index = fib_index, receive_result;
+	
+	for(int i = 0; i < 10; i++){
+		// send result of fibonacci calculation at received index 
+		unsigned long fib_res = fibonacci(receive_index);
 
+		send_result = htonl(fib_res);
+		send_index = htonl(receive_index);
+		printf("[LOG] Sending fibonacci(%lu) = %lu\n", receive_index, fib_res);
+		send(client_socket, &send_result, sizeof(send_result), 0);
+		send(client_socket, &send_index, sizeof(send_index), 0);
+		// send next index to compute
+		receive_index++;
+		send_index = htonl(receive_index);
+		printf("[LOG] Sending %lu as next fibonacci index\n", receive_index);
+		send(client_socket, &send_index, sizeof(send_index), 0);
+		
+		
+		// receive result of next fibonacci and the index used
+		read(client_socket, &receive_result, sizeof(receive_result));
+		receive_result = ntohl(receive_result);
+		read(client_socket, &receive_index, sizeof(receive_index));
+		receive_index = ntohl(receive_index);
+		printf("[LOG] Received fibonacci(%lu) = %lu\n", receive_index, receive_result);
+		// receive next index
+		read(client_socket, &receive_index, sizeof(receive_index));
+		receive_index = ntohl(receive_index);
+		printf("[LOG] Received %lu as next fibonacci index to compute\n", receive_index);
+	}
+	// close out my ports
 	func_err_check(
 		"Closing the server socket failed!",
 		err_code = close(server_socket),
