@@ -1,6 +1,6 @@
 #!/bin/sh -x
 
-for ft in c; do
+for ft in c h cpp cs java; do
 	find . -type f -name *."$ft" | 
 		xargs clang-format -style=llvm -i
 done

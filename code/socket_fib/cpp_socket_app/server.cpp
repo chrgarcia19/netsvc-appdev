@@ -29,21 +29,21 @@ int main() {
   client_len = sizeof(client_addr);
   socket_c = accept(socket_s, (struct sockaddr *)&client_addr, &client_len);
 
-  for (int i = 0; i < 10; i++){
-    //sending the input of the fibonacci function to the client
+  for (int i = 0; i < 10; i++) {
+    // sending the input of the fibonacci function to the client
     send_fib_num = htonl(fib_num);
     write(socket_c, &send_fib_num, sizeof(send_fib_num));
 
-    //sending the result of the fibonacci function to the client
+    // sending the result of the fibonacci function to the client
     send_num = htonl(fibonacci(fib_num));
     write(socket_c, &send_num, sizeof(send_num));
 
-    //receiving the input of the fibonacci function from the client
+    // receiving the input of the fibonacci function from the client
     read(socket_c, &fib_num, sizeof(fib_num));
     fib_num = htonl(fib_num);
     fib_num += 1;
 
-    //receiving the result of the fibonacci function from the client
+    // receiving the result of the fibonacci function from the client
     read(socket_c, &received_num, sizeof(received_num));
     received_num = ntohl(received_num);
 
