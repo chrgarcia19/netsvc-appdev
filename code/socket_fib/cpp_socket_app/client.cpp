@@ -5,44 +5,50 @@
 #include <sys/socket.h>
 #include <unistd.h>
 
-#define PORTNUM 4204
+#define PORTNUM 4200
 
-int main() {
-  int socket_c, socket_s, send_num, received_num, fib_num, send_fib_num;
-  sockaddr_in server_addr;
+int main(){
+    int client_socket, server_socket, send_fib_num, 
+    send_fib_input, received_num, fib_input;
+    sockaddr_in server_addr;
 
-  send_num, send_fib_num, received_num = 0;
+    fib_input = 1;
+    send_fib_num, send_fib_input, received_num = 0;
 
-  socket_c = socket(AF_INET, SOCK_STREAM, 0);
+    client_socket = socket(AF_INET, SOCK_STREAM, 0);
 
-  server_addr.sin_family = AF_INET;
-  server_addr.sin_port = htons(PORTNUM);
-  server_addr.sin_addr.s_addr = INADDR_ANY;
+    server_addr.sin_family = AF_INET;
+    server_addr.sin_port = htons(PORTNUM);
+    server_addr.sin_addr.s_addr = INADDR_ANY;
+    //The line below is if we need to link to a specific ip addr
+    //server_addr.sin_addr.s_addr = inet_addr("127.0.0.1");
 
-  connect(socket_c, (struct sockaddr *)&server_addr, sizeof(server_addr));
+    connect(client_socket, (struct sockaddr*)&server_addr, sizeof(server_addr));
 
-  for (int i = 0; i < 10; i++) {
-    // receiving the input of the fibonacci function from the server
-    read(socket_c, &fib_num, sizeof(fib_num));
-    fib_num = ntohl(fib_num);
-    fib_num += 1;
-    // receiving the result of the fibonacci function from the server
-    read(socket_c, &received_num, sizeof(received_num));
-    received_num = ntohl(received_num);
+    for (int i = 0; i < 10; i++){
+        //htonl converts from byte order to network byte order
+        send_fib_input = htonl(fib_input);
+        //sending the input of the fibonacci function to the server
+        write(client_socket, &send_fib_input, sizeof(send_fib_input));
 
-    std::cout << "Server replied with fibonacci result: " << received_num
-              << std::endl;
+        //sending the result of the fibonacci function to the server
+        send_fib_num = htonl(fibonacci(fib_input));
+        write(client_socket, &send_fib_num, sizeof(send_fib_num));
 
-    // send the inout of the fibonacci function to the server
-    send_fib_num = htonl(fib_num);
-    write(socket_c, &send_fib_num, sizeof(send_fib_num));
+        //receiving the input of the fibonacci function from the server
+        read(client_socket, &send_fib_input, sizeof(send_fib_input));
+        fib_input = ntohl(send_fib_input);
+        //receiving the result of the fibonacci function from the server
+        read(client_socket, &send_fib_num, sizeof(send_fib_num));
+        received_num = ntohl(send_fib_num);
 
-    // sending the result of the fibonacci function to the server
-    send_num = htonl(fibonacci(fib_num));
-    write(socket_c, &send_num, sizeof(send_num));
-  }
+        std::cout << "Server replied with: fibonacci(" << fib_input <<
+        ") = " << received_num << std::endl;
 
-  close(socket_c);
+        fib_input += 1;
+    }
 
-  return 0;
+    close(client_socket);
+
+    return 0;
 }

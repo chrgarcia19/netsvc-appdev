@@ -2,5 +2,8 @@
 
 https://marketsplash.com/tutorials/cpp/cplusplus-scoket/#link5
 https://stackoverflow.com/questions/9140409/transfer-integer-over-a-socket-in-c
+https://linux.die.net/man/3/htons
+https://www.geeksforgeeks.org/socket-programming-cc/
+https://stackoverflow.com/questions/16508685/understanding-inaddr-any-for-socket-programming
 
 ### ###
