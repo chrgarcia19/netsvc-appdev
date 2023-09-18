@@ -30,19 +30,13 @@ int main() {
     // sending the input of the fibonacci function to the server
     write(client_socket, &send_fib_input, sizeof(send_fib_input));
 
-    // sending the result of the fibonacci function to the server
-    send_fib_num = htonl(fibonacci(fib_input));
-    write(client_socket, &send_fib_num, sizeof(send_fib_num));
-
     // receiving the input of the fibonacci function from the server
     read(client_socket, &send_fib_input, sizeof(send_fib_input));
     fib_input = ntohl(send_fib_input);
-    // receiving the result of the fibonacci function from the server
-    read(client_socket, &send_fib_num, sizeof(send_fib_num));
-    received_num = ntohl(send_fib_num);
+
 
     std::cout << "Server replied with: fibonacci(" << fib_input
-              << ") = " << received_num << std::endl;
+              << ") = " << fibonacci(fib_input) << std::endl;
 
     fib_input += 1;
   }

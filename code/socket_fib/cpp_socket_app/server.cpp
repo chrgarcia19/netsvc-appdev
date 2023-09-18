@@ -42,21 +42,13 @@ int main() {
     read(client_socket, &send_fib_input, sizeof(send_fib_input));
     fib_input = ntohl(send_fib_input);
 
-    // receiving the result of the fibonacci function from the client
-    read(client_socket, &send_fib_num, sizeof(send_fib_num));
-    received_num = ntohl(send_fib_num);
-
     std::cout << "Client replied with: fibonacci(" << fib_input
-              << ") = " << received_num << std::endl;
+              << ") = " << fibonacci(fib_input) << std::endl;
 
     fib_input += 1;
     // sending the input of the fibonacci function to the client
     send_fib_input = htonl(fib_input);
     write(client_socket, &send_fib_input, sizeof(send_fib_input));
-
-    // sending the result of the fibonacci function to the client
-    send_fib_num = htonl(fibonacci(fib_input));
-    write(client_socket, &send_fib_num, sizeof(send_fib_num));
   }
 
   close(client_socket);
