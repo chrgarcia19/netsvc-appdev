@@ -66,36 +66,23 @@ int main(int argc, char **argv) {
   fib_index_start = htonl(fib_index_start);
   send(client_socket, &fib_index_start, sizeof(fib_index_start), 0);
 
-  unsigned long send_index, send_result;
-  unsigned long receive_index, receive_result;
+  unsigned long send_result, receive_result, fib_index = ntohl(fib_index_start);
 
   for (int i = 0; i < 10; i++) {
     // receive result of next fibonacci and the index used
     read(client_socket, &receive_result, sizeof(receive_result));
     receive_result = ntohl(receive_result);
-    read(client_socket, &receive_index, sizeof(receive_index));
-    receive_index = ntohl(receive_index);
-    printf("[LOG] Received fibonacci(%lu) = %lu\n", receive_index,
-           receive_result);
-    // receive next index
-    read(client_socket, &receive_index, sizeof(receive_index));
-    receive_index = ntohl(receive_index);
-    printf("[LOG] Received %lu as next fibonacci index to compute\n",
-           receive_index);
-
+    printf("[LOG] Received fibonacci(%lu) = %lu\n", fib_index, receive_result);
+	// increment fibonacci index to perform calculation
+	fib_index++;
     // send result of fibonacci calculation and received index
-    unsigned long fib_res = fibonacci(receive_index);
+    unsigned long fib_res = fibonacci(fib_index);
 
     send_result = htonl(fib_res);
-    send_index = htonl(receive_index);
-    printf("[LOG] Sending fibonacci(%lu) = %lu\n", receive_index, fib_res);
+    printf("[LOG] Sending fibonacci(%lu) = %lu\n", fib_index, fib_res);
     send(client_socket, &send_result, sizeof(send_result), 0);
-    send(client_socket, &send_index, sizeof(send_index), 0);
-    // send next index to compute
-    receive_index++;
-    send_index = htonl(receive_index);
-    printf("[LOG] Sending %lu as next fibonacci index\n", receive_index);
-    send(client_socket, &send_index, sizeof(send_index), 0);
+    // increment fibonacci index to keep up with server
+    fib_index++;
   }
   // close out my ports
   func_err_check("Closing the client socket failed!",

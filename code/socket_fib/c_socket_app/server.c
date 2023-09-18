@@ -57,14 +57,17 @@ int main(int argc, char **argv) {
       htonl(INADDR_ANY); // allows server to accept a client on any interface
   // binding the socket
   func_err_check("Binding the socket failed!",
-                 err_code = bind(server_socket, (struct sockaddr *)&server_addr,
-                                 sizeof(server_addr)),
-                 &less_than, 0);
+                err_code = bind(
+					server_socket, 
+					(struct sockaddr *)&server_addr, 
+					sizeof(server_addr)),
+                &less_than, 0);
   // listening on the socket for a connection; blocking I think
   func_err_check(
       "Listening on the socket failed!",
       listen(server_socket, 1), // listen for only a single connection
-      &less_than, 0);
+      &less_than, 0
+	);
   if (DEBUG_STATEMENTS)
     printf("Server listening on port %d\n", port);
   // accept incoming connection(s)
@@ -78,36 +81,23 @@ int main(int argc, char **argv) {
   fib_index = ntohl(fib_index);
   printf("[LOG] Starting at fibonacci index %lu\n", fib_index);
 
-  unsigned long send_index, send_result;
-  unsigned long receive_index = fib_index, receive_result;
+  unsigned long send_result, receive_result;
 
   for (int i = 0; i < 10; i++) {
-    // send result of fibonacci calculation at received index
-    unsigned long fib_res = fibonacci(receive_index);
+   // send result of fibonacci calculation and received index
+    unsigned long fib_res = fibonacci(fib_index);
 
     send_result = htonl(fib_res);
-    send_index = htonl(receive_index);
-    printf("[LOG] Sending fibonacci(%lu) = %lu\n", receive_index, fib_res);
+    printf("[LOG] Sending fibonacci(%lu) = %lu\n", fib_index, fib_res);
     send(client_socket, &send_result, sizeof(send_result), 0);
-    send(client_socket, &send_index, sizeof(send_index), 0);
-    // send next index to compute
-    receive_index++;
-    send_index = htonl(receive_index);
-    printf("[LOG] Sending %lu as next fibonacci index\n", receive_index);
-    send(client_socket, &send_index, sizeof(send_index), 0);
-
+    // increment fibonacci index to keep up with server
+    fib_index++;
     // receive result of next fibonacci and the index used
     read(client_socket, &receive_result, sizeof(receive_result));
     receive_result = ntohl(receive_result);
-    read(client_socket, &receive_index, sizeof(receive_index));
-    receive_index = ntohl(receive_index);
-    printf("[LOG] Received fibonacci(%lu) = %lu\n", receive_index,
-           receive_result);
-    // receive next index
-    read(client_socket, &receive_index, sizeof(receive_index));
-    receive_index = ntohl(receive_index);
-    printf("[LOG] Received %lu as next fibonacci index to compute\n",
-           receive_index);
+    printf("[LOG] Received fibonacci(%lu) = %lu\n", fib_index, receive_result);
+	// increment fibonacci index to perform calculation
+	fib_index++;
   }
   // close out my ports
   func_err_check("Closing the server socket failed!",
