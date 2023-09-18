@@ -9,12 +9,10 @@
 #define PORTNUM 4200
 
 int main(){
-    int client_socket, server_socket, send_fib_num, 
-    send_fib_input, received_num, fib_input;
+    int client_socket, send_fib_num, send_fib_input, received_num, fib_input;
     sockaddr_in server_addr;
 
     fib_input = 1;
-    send_fib_num, send_fib_input, received_num = 0;
 
     client_socket = socket(AF_INET, SOCK_STREAM, 0);
 

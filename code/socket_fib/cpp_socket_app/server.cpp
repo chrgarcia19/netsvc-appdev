@@ -9,12 +9,9 @@
 #define PORTNUM 4200
 
 int main(){
-    int server_socket, client_socket, fib_input,
-    send_fib_num, send_fib_input, received_num;
+    int server_socket, client_socket, fib_input, send_fib_num, send_fib_input, received_num;
     sockaddr_in server_addr, client_addr;
     socklen_t client_len;
-
-    send_fib_num, send_fib_input, received_num = 0; 
 
     //AF_INET determines the type of IP address
     //AF_INET is used for IPv4
