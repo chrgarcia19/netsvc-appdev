@@ -4,6 +4,7 @@
 #include <netinet/in.h>
 #include <sys/socket.h>
 #include <unistd.h>
+#include <arpa/inet.h>
 
 #define PORTNUM 4200
 
@@ -21,7 +22,7 @@ int main(){
     server_addr.sin_port = htons(PORTNUM);
     server_addr.sin_addr.s_addr = INADDR_ANY;
     //The line below is if we need to link to a specific ip addr
-    //server_addr.sin_addr.s_addr = inet_addr("127.0.0.1");
+    // server_addr.sin_addr.s_addr = inet_addr("10.1.145.4");
 
     connect(client_socket, (struct sockaddr*)&server_addr, sizeof(server_addr));
 
