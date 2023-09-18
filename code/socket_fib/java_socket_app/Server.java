@@ -1,34 +1,30 @@
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
+import java.io.DataInputStream;
+import java.io.DataOutputStream;
 import java.net.ServerSocket;
 import java.net.Socket;
 
 public class Server {
 
-  private static ServerSocket server;
-
   private static final int port = 4200;
 
   public static void main(String[] args) {
     try {
-      server = new ServerSocket(port);
+      ServerSocket server = new ServerSocket(port);
       System.out.println("Waiting for the client request");
       // creating socket and waiting for client connection
       Socket socket = server.accept();
-      // read from socket to ObjectInputStream object
-      ObjectInputStream ois = new ObjectInputStream(socket.getInputStream());
-      // create ObjectOutputStream object
-      ObjectOutputStream oos = new ObjectOutputStream(socket.getOutputStream());
+      // read from socket to DataInputStream Data
+      DataInputStream ois = new DataInputStream(socket.getInputStream());
+      // create DataOutputStream Data
+      DataOutputStream oos = new DataOutputStream(socket.getOutputStream());
 
-      while (true) {
-        // convert ObjectInputStream object to String
-        Integer numb = (Integer)ois.readObject();
+      for (int i = 0; i<= 10; i++) {
+        // convert DataInputStream Data to String
+        int numb = ois.read();
         System.out.println("Message Received: " + numb);
         numb = nextFibonacci(numb);
-        // write object to Socket
-        oos.writeObject(numb);
-        if (numb > 10000)
-          break;
+        // write Data to Socket
+        oos.write(numb);
       }
       ois.close();
       oos.close();
