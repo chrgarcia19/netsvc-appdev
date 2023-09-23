@@ -404,4 +404,5 @@ code/socket_fib/cpp_socket_app/h1
 code/socket_fib/cpp_socket_app/h2
 code/socket_fib/c_socket_app/server
 code/socket_fib/c_socket_app/client
-
+code/socket_fib/cpp_socket_app/t1
+code/socket_fib/cpp_socket_app/t2
