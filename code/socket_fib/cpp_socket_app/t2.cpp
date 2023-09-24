@@ -19,6 +19,8 @@ int main(int argc, char *argv[]) {
   int client_socket, fib_input;
   struct sockaddr_in server_addr;
 
+  srand((unsigned) time(NULL));
+
   fib_input = 1;
 
   client_socket = create_socket();
@@ -37,7 +39,7 @@ int main(int argc, char *argv[]) {
     std::cout << "Server replied with: fibonacci(" << fib_input
               << ") = " << fibonacci(fib_input) << std::endl;
 
-    fib_input += 1;
+    fib_input = rand() % 40;
   }
 
   close_one_socket(&client_socket);

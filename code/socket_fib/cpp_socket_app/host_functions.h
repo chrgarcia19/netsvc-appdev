@@ -1,5 +1,5 @@
 #include <arpa/inet.h>
-#include <cstring>
+#include <cstdlib>
 #include <iostream>
 #include <netinet/in.h>
 #include <sys/socket.h>
@@ -44,12 +44,6 @@ void listen_to_socket(int *socket, int num_connections){
 
 void connect_socket(int *socket, struct sockaddr_in ip_addr){
     connect(*socket, (struct sockaddr*)&ip_addr, sizeof(ip_addr));
-}
-
-//Doesn't work
-void accept_socket(int *socket, struct sockaddr_in *ip_addr){
-    socklen_t *socket_len = (socklen_t*) sizeof(ip_addr);
-    accept(*socket, (struct sockaddr*)&ip_addr, socket_len);
 }
 
 int read_data(int *socket, int data){

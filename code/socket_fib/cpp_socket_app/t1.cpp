@@ -21,6 +21,7 @@ int main(int argc, char *argv[]) {
   struct sockaddr_in client_addr;
   socklen_t client_len;
   
+  srand((unsigned) time(NULL));
 
   server_socket = create_socket();
 
@@ -34,8 +35,8 @@ int main(int argc, char *argv[]) {
   
   client_len = sizeof(client_addr);
   client_socket =
-      accept(server_socket, (struct sockaddr *)&client_addr, &client_len);
-  //accept_socket(&server_socket, &client_addr);
+     accept(server_socket, (struct sockaddr *)&client_addr, &client_len);
+  //accept_socket(&server_socket, &client_addr, client_len);
 
   for (int i = 0; i < 10; i++) {
     // receiving the input of the fibonacci function from the client
@@ -44,7 +45,7 @@ int main(int argc, char *argv[]) {
     std::cout << "Client replied with: fibonacci(" << fib_input
               << ") = " << fibonacci(fib_input) << std::endl;
 
-    fib_input += 1;
+    fib_input = rand() % 40;
     // sending the input of the fibonacci function to the client
     write_data(&client_socket, fib_input);
   }
