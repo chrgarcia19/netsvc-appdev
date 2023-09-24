@@ -34,17 +34,6 @@ int socket_setup(struct sockaddr_in *socket_addr, char* ip, int port){
     return port;
 }
 
-
-int socket_setup(struct sockaddr_in *socket_addr){
-    socket_addr->sin_family = AF_INET;
-    // htons converts a byte order into a network byte order
-    socket_addr->sin_port = htons(DEFAULT_PORT);
-    // INADDR_ANY binds to any interface (IP or localhost)
-    socket_addr->sin_addr.s_addr = htonl(INADDR_ANY);
-    int port = DEFAULT_PORT;
-    return port;
-}
-
 void bind_socket(int *socket, struct sockaddr_in ip_addr){
     bind(*socket, (struct sockaddr*)&ip_addr, sizeof(ip_addr));
 }
@@ -57,20 +46,20 @@ void connect_socket(int *socket, struct sockaddr_in ip_addr){
     connect(*socket, (struct sockaddr*)&ip_addr, sizeof(ip_addr));
 }
 
-//Doesn't work; Stuff below this function has not been tested yet
-void accept_socket(int *socket, struct sockaddr_in ip_addr){
-    socklen_t socket_len = sizeof(ip_addr);
-    accept(*socket, (struct sockaddr*)&ip_addr, &socket_len);
+//Doesn't work
+void accept_socket(int *socket, struct sockaddr_in *ip_addr){
+    socklen_t *socket_len = (socklen_t*) sizeof(ip_addr);
+    accept(*socket, (struct sockaddr*)&ip_addr, socket_len);
 }
 
-int read_data(int *socket, int *data){
+int read_data(int *socket, int data){
     read(*socket, &data, sizeof(data));
-    int new_data = ntohl(*data);
+    int new_data = ntohl(data);
     return new_data; 
 }
 
-void write_data(int *socket, int *data){
-    int new_data = htonl(*data);
+void write_data(int *socket, int data){
+    int new_data = htonl(data);
     write(*socket, &new_data, sizeof(new_data));
 }
 
@@ -83,7 +72,6 @@ void close_two_sockets(int *socket1, int *socket2){
     close(*socket2);
 }
 
-//Works
 int fibonacci(int n) {
   if (n == 0){
     return 0;
