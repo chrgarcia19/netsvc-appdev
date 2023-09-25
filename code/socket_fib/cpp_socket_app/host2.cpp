@@ -89,7 +89,6 @@ int main(int argc, char *argv[]) {
     ip = argv[1];
     port = atoi(argv[2]);
     host_order = 2;
-  }
   }else if (argc == 4){
     ip = argv[1];
     port = atoi(argv[2]);
