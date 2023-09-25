@@ -1,20 +1,17 @@
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
-import java.net.InetAddress;
-import java.net.InetSocketAddress;
-import java.net.Socket;
-import java.net.SocketAddress;
+import java.net.*;
 import java.util.Random;
 import java.util.Timer;
 import java.util.TimerTask;
 
-public class Client {
+public class FibSocket {
   private static int port = 4200;
 
   static Timer timer = new Timer();
   
-  private static final Socket socket = new Socket();
+  private static Socket socket = new Socket();
 
   static class Task extends TimerTask {
     private static DataOutputStream dos;
@@ -43,16 +40,29 @@ public class Client {
 
   public static void main(String[] args) {
     try {
+      boolean IsServer = false;
       InetAddress host = InetAddress.getLocalHost();
       if (args.length > 0){
-        port = Integer.parseInt(args[0]);
+        if (args[0].equalsIgnoreCase("server")) IsServer = true;
         if (args.length > 1){
-          host = InetAddress.getByName(args[1]);
+          port = Integer.parseInt(args[1]);
+          if (args.length > 2){
+            host = InetAddress.getByName(args[2]);
+          }
         }
       }
-      SocketAddress address = new InetSocketAddress(host, port);
-      socket.bind(address);
-      socket.connect(address, 0);
+
+      if (IsServer){
+        ServerSocket server = new ServerSocket(port);
+        System.out.println("Waiting for incoming connection...");
+        socket = server.accept();
+      }
+      else{
+        SocketAddress address = new InetSocketAddress(host, port);
+        socket.bind(address);
+        socket.connect(address, 10000);
+      }
+
 
       DataOutputStream dos = new DataOutputStream(socket.getOutputStream());
       DataInputStream dis = new DataInputStream(socket.getInputStream());
