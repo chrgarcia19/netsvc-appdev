@@ -52,7 +52,7 @@ public class Client {
       }
       SocketAddress address = new InetSocketAddress(host, port);
       socket.bind(address);
-      socket.connect(address);
+      socket.connect(address, 0);
 
       DataOutputStream dos = new DataOutputStream(socket.getOutputStream());
       DataInputStream dis = new DataInputStream(socket.getInputStream());
