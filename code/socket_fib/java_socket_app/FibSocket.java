@@ -10,8 +10,6 @@ public class FibSocket {
   private static int port = 4200;
 
   static Timer timer = new Timer();
-  
-  private static Socket socket = new Socket();
 
   static class Task extends TimerTask {
     private static DataOutputStream dos;
@@ -52,15 +50,14 @@ public class FibSocket {
         }
       }
 
+      Socket socket;
       if (IsServer){
         ServerSocket server = new ServerSocket(port);
         System.out.println("Waiting for incoming connection...");
         socket = server.accept();
       }
       else{
-        SocketAddress address = new InetSocketAddress(host, port);
-        socket.bind(address);
-        socket.connect(address, 10000);
+        socket = new Socket(host, port);
       }
 
 
