@@ -80,7 +80,7 @@ int main(int argc, char *argv[]) {
   if (argc == 1){
     ip = NULL;
     port = 0;
-    host_order = 1;
+    host_order = 2;
   }else if (argc == 2){
     ip = NULL;
     port = 0; 
