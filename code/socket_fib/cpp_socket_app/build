@@ -3,5 +3,5 @@
 CPPFLAGS="-std=c++17 -Wall -Wpedantic -Wextra"
 
 for dspp in host.cpp; do
-	"${CC:-g++}" $CPPFLAGS -o "${dspp%%.cpp}" "$dspp"
+	"${CC:-g++}" $CPPFLAGS -pthread -o "${dspp%%.cpp}" "$dspp"
 done
