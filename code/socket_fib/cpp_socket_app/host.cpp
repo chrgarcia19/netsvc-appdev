@@ -3,23 +3,21 @@
 #include <cstring>
 #include <iostream>
 #include <netinet/in.h>
-#include <pthread.h>
+#include <thread>
 #include <sys/socket.h>
 #include <unistd.h>
 
 using namespace std;
 
-static void *run(void *arg) {
-  int *socket = (int *)arg;
+void run(int socket) {
   int timer = (2 + rand() % 9) * 1000;
   int fib_input = rand() % 30;
   cout << "[SEND] Fibonacci index: " << fib_input << endl;
-  write_data(socket, fib_input);
-  fib_input = read_data(socket, fib_input);
+  write_data(&socket, fib_input);
+  fib_input = read_data(&socket, fib_input);
   cout << "[RECEIVE] Fibonacci(" << fib_input << ") = " << fibonacci(fib_input)
        << endl;
   cout << "Resetting timer in: " << timer / 1000 << " seconds.\n" << endl;
-  return 0;
 }
 
 int main(int argc, char *argv[]) {
@@ -43,44 +41,43 @@ int main(int argc, char *argv[]) {
     host_order = atoi(argv[3]);
   }
 
-  int socket_h1, socket_h2;
-  struct sockaddr_in h1_addr;
-  struct sockaddr_in h2_addr;
-  socklen_t h2_len;
-  pthread_t thread;
+  int socket;
+  struct sockaddr_in sock_addr;
+  socklen_t sock_len;
 
   srand((unsigned)time(NULL));
 
   if (host_order == 1) {
-    socket_h1 = create_socket();
+    socket = create_socket();
 
-    port = socket_setup(&h1_addr, ip, port);
+    port = socket_setup(&sock_addr, ip, port);
 
-    bind_socket(&socket_h1, h1_addr);
-    listen_to_socket(&socket_h1, 1);
+    bind_socket(&socket, sock_addr);
+    listen_to_socket(&socket, 1);
 
     cout << "Host 1 is waiting for a connection on port " << port << endl;
     cout << endl;
 
-    h2_len = sizeof(h2_addr);
-    socket_h2 = accept(socket_h1, (struct sockaddr *)&h2_addr, &h2_len);
+    sock_len = sizeof(sock_addr);
+    socket = accept(socket, (struct sockaddr *)&sock_addr, &sock_len);
 
   } else if (host_order == 2) {
-    socket_h2 = create_socket();
+    socket = create_socket();
 
-    socket_setup(&h1_addr, ip, port);
+    socket_setup(&sock_addr, ip, port);
 
-    connect_socket(&socket_h2, h1_addr);
+    connect_socket(&socket, sock_addr);
   }
 
   for (int i = 0; i < 10; i++) {
     cout << "Sending Message: " << i + 1 << "/10" << endl;
-    pthread_create(&thread, NULL, &run, &socket_h2);
-    pthread_join(thread, NULL);
+    thread t1(run, socket);
+    t1.join();
   }
+  
   cout << "The thread has ended!" << endl;
 
-  close_two_sockets(&socket_h2, &socket_h1);
+  close_two_sockets(&socket, &socket);
 
   cout << "The sockets have been closed!" << endl;
 
