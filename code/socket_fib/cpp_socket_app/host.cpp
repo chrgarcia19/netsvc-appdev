@@ -9,10 +9,10 @@
 
 using namespace std;
 
-static void *start_host(void *arg){
+static void *run(void *arg){
     int *socket = (int*) arg;
     int timer = (2 + rand() % 9) * 1000;
-    int fib_input = rand() % 40;
+    int fib_input = rand() % 50;
     cout << "[SEND] Fibonacci index: " << fib_input << endl;
     write_data(socket, fib_input);
     fib_input = read_data(socket, fib_input);
@@ -20,19 +20,6 @@ static void *start_host(void *arg){
     cout << "Resetting timer in: " << timer/1000 << " seconds.\n" << endl;
     return 0;
 }
-
-static void *receive_host(void *arg){
-    int *socket = (int*) arg;
-    int fib_input = read_data(socket, fib_input);
-    cout << "[SEND] Fibonacci index: " << fib_input << endl;
-    cout << "[RECEIVE] Fibonacci(" << fib_input << ") = " << fibonacci(fib_input) << endl;
-    write_data(socket, fibonacci(fib_input));
-    return 0;
-}
-
-
-
-
 
 int main(int argc, char* argv[]){
     int port, host_order;
@@ -55,11 +42,11 @@ int main(int argc, char* argv[]){
         host_order = atoi(argv[3]);
     }
 
-    int socket_h1, socket_h2, fib_input, i1;
+    int socket_h1, socket_h2;
     struct sockaddr_in h1_addr;
     struct sockaddr_in h2_addr;
     socklen_t h2_len;
-    pthread_t start_thread;
+    pthread_t thread;
 
     srand((unsigned) time(NULL));
 
@@ -88,19 +75,15 @@ int main(int argc, char* argv[]){
 
     
     for (int i = 0; i < 10; i++){
-        cout << "Sending Message: " << i << "/10" << endl;
-        i1 = pthread_create(&start_thread, NULL, &start_host, &socket_h2);
-        pthread_join(start_thread, NULL);
-
-        fib_input = read_data(&socket_h2, fib_input);
-        cout << "[SEND] Fibonacci index: " << fib_input << endl;
-        cout << "[RECEIVE] Fibonacci(" << fib_input << ") = " << fibonacci(fib_input) << endl;
-        write_data(&socket_h2, fibonacci(fib_input));
-        //i2 = pthread_create(&receive_thread, NULL, &receive_host, &socket_h2);
-        //pthread_join(receive_thread, NULL);
+        cout << "Sending Message: " << i+1 << "/10" << endl;
+        pthread_create(&thread, NULL, &run, &socket_h2);
+        pthread_join(thread, NULL);
     }
+    cout << "The thread has ended!" << endl;
 
     close_two_sockets(&socket_h2, &socket_h1);
+
+    cout << "The sockets have been closed!" << endl;
 
 
     
