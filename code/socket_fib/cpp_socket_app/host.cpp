@@ -1,85 +1,92 @@
 #include "host_functions.h"
-#include <arpa/inet.h>
-#include <cstring>
-#include <iostream>
-#include <netinet/in.h>
 #include <thread>
-#include <sys/socket.h>
-#include <unistd.h>
 
 using namespace std;
 
-void run(int socket) {
-  int timer = (2 + rand() % 9) * 1000;
-  int fib_input = rand() % 30;
-  cout << "[SEND] Fibonacci index: " << fib_input << endl;
-  write_data(&socket, fib_input);
-  fib_input = read_data(&socket, fib_input);
-  cout << "[RECEIVE] Fibonacci(" << fib_input << ") = " << fibonacci(fib_input)
-       << endl;
-  cout << "Resetting timer in: " << timer / 1000 << " seconds.\n" << endl;
+
+void run1(int socket){
+    int delay = (1 + rand() % 5) * 1000;
+    cout << "[Timer Thread 1] Setting timer in " << delay/1000 << " seconds." << endl;
+    int fib_input = rand() % 30;
+    cout << "[Timer Thread 1: SEND] Fibonacci input: " << fib_input << endl;
+    write_data(&socket, fib_input);
+    int fib_out = read_data(&socket, fib_out);
+    cout << "[Timer Thread 1: RECEIVE] Fibonacci result: " << fibonacci(fib_out) << endl;
 }
 
-int main(int argc, char *argv[]) {
-  int port, host_order;
-  char *ip;
-  if (argc == 1) {
-    ip = NULL;
-    port = 0;
-    host_order = 1;
-  } else if (argc == 2) {
-    ip = NULL;
-    port = 0;
-    host_order = atoi(argv[1]);
-  } else if (argc == 3) {
-    ip = argv[1];
-    port = atoi(argv[2]);
-    host_order = 1;
-  } else if (argc == 4) {
-    ip = argv[1];
-    port = atoi(argv[2]);
-    host_order = atoi(argv[3]);
-  }
+void run2(int socket){
+    int fib_out = read_data(&socket, fib_out);
+    cout << "[Timer Thread 2: RECEIVE] Fibonacci result: " << fibonacci(fib_out) << endl;
+    int fib_input = rand() % 30;
+    cout << "[Timer Thread 2: SEND] Fibonacci input: " << fib_input << endl;
+    write_data(&socket, fib_input);
+}
 
-  int socket;
-  struct sockaddr_in sock_addr;
-  socklen_t sock_len;
 
-  srand((unsigned)time(NULL));
 
-  if (host_order == 1) {
-    socket = create_socket();
+int main(int argc, char* argv[]){
+    int port, host_order;
+    char *ip;
+    if (argc == 1) {
+        ip = NULL;
+        port = 0;
+        host_order = 1;
+    } else if (argc == 2) {
+        ip = NULL;
+        port = 0;
+        host_order = atoi(argv[1]);
+    } else if (argc == 3) {
+        ip = argv[1];
+        port = atoi(argv[2]);
+        host_order = 1;
+    } else if (argc == 4) {
+        ip = argv[1];
+        port = atoi(argv[2]);
+        host_order = atoi(argv[3]);
+    }
 
-    port = socket_setup(&sock_addr, ip, port);
+    srand((unsigned)time(NULL));
 
-    bind_socket(&socket, sock_addr);
-    listen_to_socket(&socket, 1);
+    int socket;
+    struct sockaddr_in sock_addr;
+    socklen_t sock_len;
 
-    cout << "Host 1 is waiting for a connection on port " << port << endl;
-    cout << endl;
+    if (host_order == 1){
+        socket = create_socket();
 
-    sock_len = sizeof(sock_addr);
-    socket = accept(socket, (struct sockaddr *)&sock_addr, &sock_len);
+        port = socket_setup(&sock_addr, ip, port);
 
-  } else if (host_order == 2) {
-    socket = create_socket();
+        bind_socket(&socket, sock_addr);
+        listen_to_socket(&socket, 1);
 
-    socket_setup(&sock_addr, ip, port);
+        cout << "Host 1 is waiting for a connection on port " << port << endl;
+        cout << endl;
 
-    connect_socket(&socket, sock_addr);
-  }
+        sock_len = sizeof(sock_addr);
+        socket = accept(socket, (struct sockaddr *)&sock_addr, &sock_len);
+    } else if (host_order == 2){
+        socket = create_socket();
 
-  for (int i = 0; i < 10; i++) {
-    cout << "Sending Message: " << i + 1 << "/10" << endl;
-    thread t1(run, socket);
-    t1.join();
-  }
-  
-  cout << "The thread has ended!" << endl;
+        socket_setup(&sock_addr, ip, port);
 
-  close_two_sockets(&socket, &socket);
+        connect_socket(&socket, sock_addr);
+    }
 
-  cout << "The sockets have been closed!" << endl;
-
-  return 0;
+    for (int i = 0; i < 10; i++){
+        if (host_order == 1){
+            cout << "Message: " << i+1 << "/10" << endl;
+            thread t1(run1, socket);
+            t1.join();
+            cout << endl;
+        } else if (host_order == 2){
+            cout << "Message: " << i+1 << "/10" << endl;
+            thread t2(run2, socket);
+            t2.join();
+            cout << endl;
+        }
+    }
+    
+    close_one_socket(&socket);
+    close_two_sockets(&socket, &socket);
+    return 0;
 }
