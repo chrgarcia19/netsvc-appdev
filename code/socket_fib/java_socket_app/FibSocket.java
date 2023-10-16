@@ -58,6 +58,7 @@ public class FibSocket {
           socket = server.accept();
         } else {
           socket = new Socket(host, port);
+          System.out.println("Connected to Server...");
         }
 
 
