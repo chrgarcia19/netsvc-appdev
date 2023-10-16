@@ -13,7 +13,7 @@ void write_to_socket (int * const socket, void * data, size_t data_size);
 #ifndef NETWORKING_SRC
 #define NETWORKING_SRC
 
-#include <stdint.h>
+#include <stdio.h>
 #include <unistd.h>
 #include <stdlib.h>
 #include <strings.h>
@@ -41,25 +41,28 @@ int socket_address_config(struct sockaddr_in * const socket_addr, const int PORT
 }
 
 void read_from_socket(int * const socket, void * data, size_t data_size){
-	if(data_size <= 4){
+	if(data_size <= sizeof(long)){
 		void * const read_data = malloc(data_size);
-		int* converted_data = malloc(sizeof(int));
+		long* converted_data = (long*)malloc(sizeof(long));
 
 		read(*socket, read_data, data_size);
-		*converted_data = ntohl(*(uint32_t *)read_data);
+		*converted_data = ntohl(*(long *)read_data);
 
 		data = converted_data;
 	}
 	else{
-		printf("[ERROR] data_size passed to read_from_socket was larger than an int!\n");
+		printf("[ERROR] data_size passed to read_from_socket was larger than a long! This is currently unsupported\n");
 	}
 }
 
 void write_to_socket (int * const socket, void * data, size_t data_size){
-	if(data_size > 4)
-		return;	//currently this is unsupported
-	int send_data = htonl(*(uint32_t *)data);
-	write(*socket, &send_data, data_size);
+	if(data_size <= sizeof(long)){
+		int send_data = htonl(*(long *)data);
+		write(*socket, &send_data, data_size);
+	}
+	else{
+		printf("[ERROR] data_size passed to write_to_socket was larger than a long! This is currently unsupported\n");
+	}	
 }
 
 #endif
