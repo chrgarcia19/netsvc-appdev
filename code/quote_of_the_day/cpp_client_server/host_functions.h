@@ -1,11 +1,11 @@
+#include "quote_class.h"
 #include <arpa/inet.h>
 #include <cstdlib>
+#include <cstring>
 #include <iostream>
 #include <netinet/in.h>
 #include <sys/socket.h>
 #include <unistd.h>
-#include <cstring>
-#include "quote_class.h"
 
 #define DEFAULT_PORT 4200
 
@@ -49,19 +49,19 @@ void connect_socket(int *socket, struct sockaddr_in ip_addr) {
   connect(*socket, (struct sockaddr *)&ip_addr, sizeof(ip_addr));
 }
 
-string read_data(int *socket){
-  char buffer[1024] = {0};
-  read(*socket, &buffer, sizeof(buffer));
-  string new_data;
-  new_data.push_back(buffer);
+string read_data(int *socket, size_t size) {
+  char *data = new char[size];
+  read(*socket, data, size);
+  string new_data = data;
   return new_data;
 }
 
-//write works
-void write_data(int *socket, string data) {
-  char* data_array = new char[data.length() + 1];
-  strcpy(data_array, data.c_str());
-  send(*socket, data_array, strlen(data_array), 0);
+size_t write_data(int *socket, string *data) {
+  char *data_array = new char[data->length() + 1];
+  strcpy(data_array, data->c_str());
+  size_t size = strlen(data_array);
+  write(*socket, data_array, strlen(data_array));
+  return size;
 }
 
 void close_one_socket(int *socket) { close(*socket); }
