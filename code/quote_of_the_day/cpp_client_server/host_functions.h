@@ -7,7 +7,6 @@
 #include "quote_class.h"
 
 #define DEFAULT_PORT 4200
-#define MAX_CONNECTIONS 10
 
 /*NETWORKING METHODS*/
 int create_socket() {
@@ -49,15 +48,14 @@ void connect_socket(int *socket, struct sockaddr_in ip_addr) {
   connect(*socket, (struct sockaddr *)&ip_addr, sizeof(ip_addr));
 }
 
-int read_data(int *socket, Quote data) {
+Quote read_data(int *socket, Quote data) {
   read(*socket, &data, sizeof(data));
-  Quote new_data = ntohl(data);
+  Quote new_data = data;
   return new_data;
 }
 
 void write_data(int *socket, Quote data) {
-  Quote new_data = htonl(data);
-  write(*socket, &new_data, sizeof(new_data));
+  write(*socket, &data, sizeof(data));
 }
 
 void close_one_socket(int *socket) { close(*socket); }

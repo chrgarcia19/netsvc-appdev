@@ -6,7 +6,28 @@
 #define QUOTES_FILE "../quotes.csv"
 #define MAX_QUOTES 1662
 
-int main(){
+int main(int argc, char* argv[]){
+    int port;
+    char *ip;
+    string client_or_server;
+    if (argc == 1){
+        ip = NULL;
+        port = 0;
+        client_or_server = "client";
+    } else if (argc == 2){
+        ip = NULL;
+        port = 0;
+        client_or_server = argv[1];
+    } else if (argc == 3){
+        ip = argv[1];
+        port = atoi(argv[2]);
+        client_or_server = "client";
+    } else if (argc == 4){
+        ip = argv[1];
+        port = atoi(argv[2]);
+        client_or_server = argv[3];
+    }
+
     srand((unsigned)time(NULL));
     //code for parsing a csv file came from:
     //https://java2blog.com/cpp-read-file-into-array/
@@ -33,7 +54,12 @@ int main(){
         quotes[i] = newQuote;
     }
     
-    quotes[1].toString();
+    if (client_or_server == "server"){
+        cout << "I am the server" << endl;
+
+    } else if (client_or_server == "client"){
+        cout << "I am the client";
+    }
 
     return 0;
 }
