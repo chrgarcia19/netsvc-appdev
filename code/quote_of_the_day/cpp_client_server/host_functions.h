@@ -4,6 +4,7 @@
 #include <netinet/in.h>
 #include <sys/socket.h>
 #include <unistd.h>
+#include <cstring>
 #include "quote_class.h"
 
 #define DEFAULT_PORT 4200
@@ -48,14 +49,19 @@ void connect_socket(int *socket, struct sockaddr_in ip_addr) {
   connect(*socket, (struct sockaddr *)&ip_addr, sizeof(ip_addr));
 }
 
-Quote read_data(int *socket, Quote data) {
-  read(*socket, &data, sizeof(data));
-  Quote new_data = data;
+string read_data(int *socket){
+  char buffer[1024] = {0};
+  read(*socket, &buffer, sizeof(buffer));
+  string new_data;
+  new_data.push_back(buffer);
   return new_data;
 }
 
-void write_data(int *socket, Quote data) {
-  write(*socket, &data, sizeof(data));
+//write works
+void write_data(int *socket, string data) {
+  char* data_array = new char[data.length() + 1];
+  strcpy(data_array, data.c_str());
+  send(*socket, data_array, strlen(data_array), 0);
 }
 
 void close_one_socket(int *socket) { close(*socket); }

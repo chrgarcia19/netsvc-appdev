@@ -33,6 +33,8 @@ int main(int argc, char* argv[]){
     int socket;
     struct sockaddr_in sock_addr;
     socklen_t sock_len;
+    char read;
+    string read_quote;
     
     srand((unsigned)time(NULL));
     //code for parsing a csv file came from:
@@ -51,14 +53,6 @@ int main(int argc, char* argv[]){
     }else{
         cout<<"Couldn't open the file\n";
     }
- 
-    Quote quotes[MAX_QUOTES];
-
-    for (int i = 0; i < MAX_QUOTES; i++){
-        Quote newQuote = Quote();
-        newQuote = newQuote.stringToQuote(arr[i]);
-        quotes[i] = newQuote;
-    }
     
     if (client_or_server == "server"){
         socket = create_socket();
@@ -72,6 +66,8 @@ int main(int argc, char* argv[]){
 
         sock_len = sizeof(sock_addr);
         socket = accept(socket, (struct sockaddr *)&sock_addr, &sock_len);
+
+        write_data(&socket, arr[1]);
     } else if (client_or_server == "client"){
         
         socket = create_socket();
@@ -81,7 +77,19 @@ int main(int argc, char* argv[]){
         connect_socket(&socket, sock_addr);
 
         cout << "The client has connected to the server" << endl;
+
+        read_quote = read_data(&socket, read);
+
+        cout << endl;
+        cout << read_quote << endl;
+        cout << endl;
+        Quote test_quote = Quote();
+        test_quote.stringToQuote(read_quote);
+        test_quote.toString();
     }
+    close_one_socket(&socket);
+
+
 
     return 0;
 }

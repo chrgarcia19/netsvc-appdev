@@ -2,8 +2,6 @@
 
 using namespace std;
 
-#define LETTERS "abcdefghijklmnopqrstuvwxyz"
-
 class Quote {
   private:
     string name, quote, date;
