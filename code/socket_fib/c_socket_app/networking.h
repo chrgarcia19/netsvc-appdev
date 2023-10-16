@@ -57,7 +57,7 @@ void read_from_socket(int * const socket, void * data, size_t data_size){
 
 void write_to_socket (int * const socket, void * data, size_t data_size){
 	if(data_size <= sizeof(long)){
-		int send_data = htonl(*(long *)data);
+		long send_data = htonl(*(long *)data);
 		write(*socket, &send_data, data_size);
 	}
 	else{
