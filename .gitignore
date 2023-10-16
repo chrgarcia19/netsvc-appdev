@@ -403,4 +403,4 @@ FodyWeavers.xsd
 code/socket_fib/c_socket_app/server
 code/socket_fib/c_socket_app/client
 code/socket_fib/cpp_socket_app/host
-code/quote_of_the_day/cpp_client_server
+code/quote_of_the_day/cpp_client_server/client_server
