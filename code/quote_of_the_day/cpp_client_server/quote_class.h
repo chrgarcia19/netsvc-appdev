@@ -1,4 +1,5 @@
 #include <string>
+#include <iostream>
 
 using namespace std;
 
@@ -36,14 +37,14 @@ public:
       position += quote_split.find(",") + 1;
     }
     string quote = after.substr(0, position);
-    after = after.substr(position + 1, 8);
+    after = after.substr(position + 1, 10);
     Quote newQuote = Quote(name, quote, after);
     return newQuote;
   }
 
   void toString() {
     cout << "Name: " << this->name << "\nQuote: " << this->quote
-         << "\nDate: " << this->date << endl;
+    << "\nDate: " << this->date << endl;
   }
 
   void setName(string n) { this->name = n; }

@@ -1,7 +1,5 @@
 #include "host_functions.h"
 #include <fstream>
-#include <iostream>
-#include <string>
 
 #define QUOTES_FILE "../quotes.csv"
 #define MAX_QUOTES 1662
@@ -95,6 +93,8 @@ int main(int argc, char *argv[]) {
       cout << endl;
     }
   }
+
+  cout << "The connection has been closed!" << endl;
 
   close_one_socket(&socket);
 
