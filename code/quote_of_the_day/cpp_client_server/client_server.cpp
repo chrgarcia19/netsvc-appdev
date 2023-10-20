@@ -30,7 +30,6 @@ int main(int argc, char *argv[]) {
 
   int socket;
   struct sockaddr_in sock_addr;
-  socklen_t sock_len;
   string read_quote;
   size_t size = 10000;
 
@@ -54,6 +53,7 @@ int main(int argc, char *argv[]) {
 
   if (client_or_server == "server") {
     socket = create_socket();
+    socket = check_socket(&socket);
 
     port = socket_setup(&sock_addr, ip, port);
 
@@ -63,29 +63,34 @@ int main(int argc, char *argv[]) {
     cout << "The server is waiting for a connection on port " << port << endl;
     cout << endl;
 
-    sock_len = sizeof(sock_addr);
-    socket = accept(socket, (struct sockaddr *)&sock_addr, &sock_len);
-
+    socket = accept_socket(&socket, sock_addr, sizeof(sock_addr));
   } else if (client_or_server == "client") {
 
     socket = create_socket();
+    socket = check_socket(&socket);
 
     socket_setup(&sock_addr, ip, port);
 
     connect_socket(&socket, sock_addr);
-
+    
     cout << "The client has connected to the server\n" << endl;
   }
 
-  for (int i = 0; i < 5; i++) {
+
+  if (check_connection(&socket) == -1){
+    close_one_socket(&socket);
+    cout << "The connection has been lost!" << endl;
+  } else {
     int random = rand() % MAX_QUOTES;
 
     if (client_or_server == "server") {
       size = write_data(&socket, &arr[random]);
+      check_data_transfer_send(&socket, &arr[random], size);
 
       cout << "The server sent out a quote to the client!\n" << endl;
     } else if (client_or_server == "client") {
       read_quote = read_data(&socket, size);
+      check_data_transfer_recv(&socket, size);
 
       Quote quote = Quote();
       quote = quote.stringToQuote(read_quote);
@@ -93,6 +98,7 @@ int main(int argc, char *argv[]) {
       cout << endl;
     }
   }
+  
 
   cout << "The connection has been closed!" << endl;
 
