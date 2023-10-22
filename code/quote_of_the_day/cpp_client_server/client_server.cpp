@@ -31,7 +31,8 @@ int main(int argc, char *argv[]) {
   int socket;
   struct sockaddr_in sock_addr;
   string read_quote;
-  size_t size = 10000;
+  ssize_t size = 10000;
+  string data_ask;
 
   srand((unsigned)time(NULL));
   // code for parsing a csv file came from:
@@ -53,9 +54,8 @@ int main(int argc, char *argv[]) {
 
   if (client_or_server == "server") {
     socket = create_socket();
-    socket = check_socket(&socket);
 
-    port = socket_setup(&sock_addr, ip, port);
+    port = socket_setup(&socket, &sock_addr, ip, port);
 
     bind_socket(&socket, sock_addr);
     listen_to_socket(&socket, MAX_CONNECTIONS);
@@ -67,9 +67,8 @@ int main(int argc, char *argv[]) {
   } else if (client_or_server == "client") {
 
     socket = create_socket();
-    socket = check_socket(&socket);
 
-    socket_setup(&sock_addr, ip, port);
+    socket_setup(&socket, &sock_addr, ip, port);
 
     connect_socket(&socket, sock_addr);
     
@@ -84,13 +83,17 @@ int main(int argc, char *argv[]) {
     int random = rand() % MAX_QUOTES;
 
     if (client_or_server == "server") {
+      //data_ask = read_data(&socket, size);
+
+  
       size = write_data(&socket, &arr[random]);
-      check_data_transfer_send(&socket, &arr[random], size);
 
       cout << "The server sent out a quote to the client!\n" << endl;
     } else if (client_or_server == "client") {
+      //data_ask = ask_for_data();
+      //size = write_data(&socket, &data_ask);
+      
       read_quote = read_data(&socket, size);
-      check_data_transfer_recv(&socket, size);
 
       Quote quote = Quote();
       quote = quote.stringToQuote(read_quote);
