@@ -7,12 +7,10 @@ import java.util.*;
 import java.util.stream.Stream;
 
 public class WOTD {
-    static Socket socket;
-    static DataInputStream input;
-    static DataOutputStream output;
     static InetAddress address;
     static int port = 4200;
     static HashMap<Integer, String[]> quotes = new HashMap<>();
+    static String[] qotd = new String[3];
 
     private static final char DEFAULT_SEPARATOR = ',';
     private static final char DOUBLE_QUOTES = '"';
@@ -41,6 +39,10 @@ public class WOTD {
             throw new RuntimeException(e);
         }
 
+        Random var2 = new Random();
+        int var3 = var2.nextInt(1660);
+        qotd = quotes.get(var3);
+
         try {
             boolean isServer = false;
             address = InetAddress.getLocalHost();
@@ -58,7 +60,7 @@ public class WOTD {
             }
 
             if (isServer) {
-                Server();
+                ServerMain();
             } else {
                 Client();
             }
@@ -70,80 +72,132 @@ public class WOTD {
 
     public static void Client() {
         try {
-            socket = new Socket(address, port);
+            Socket socket = new Socket(address, port);
             System.out.println("Connected");
-            input = new DataInputStream(socket.getInputStream());
-            output = new DataOutputStream(socket.getOutputStream());
-        } catch (UnknownHostException e) {
-            System.out.println(e);
-            return;
-        } catch (IOException e) {
-            System.out.println(e);
-            return;
-        }
+            DataInputStream input = new DataInputStream(socket.getInputStream());
+            DataOutputStream output = new DataOutputStream(socket.getOutputStream());
 
-        try {
-            output.writeUTF("Send Quote");
-            String var1 = "";
-            while (!var1.equals("Over")) {
+            String response = "";
+            while (!response.equals("E")) {
                 try {
-                    System.out.println("Waiting for Quote...");
-                    var1 = input.readUTF();
-                    System.out.println(var1);
-                    var1 = "Over";
-                    output.writeUTF(var1);
+                    System.out.println("\nPrivde an input to the server:" +
+                            "\n Q - Request the Quote" +
+                            "\n D - Request the date of the quote" +
+                            "\n A - Request the author of the quote" +
+                            "\n R - Request Everything" +
+                            "\n E - Exit Program" +
+                            "\n\t");
+                    response = System.console().readLine();
+                    switch (response) {
+                        case "Q" -> {
+                            output.writeUTF("Q");
+                            System.out.println("\nWaiting for Quote...\n");
+                        }
+                        case "D" -> {
+                            output.writeUTF("D");
+                            System.out.println("\nWaiting for Date...\n");
+                        }
+                        case "A" -> {
+                            output.writeUTF("A");
+                            System.out.println("\nWaiting for Author...\n");
+                        }
+                        case "R" -> {
+                            output.writeUTF("R");
+                            System.out.println("\nWaiting for Response...\n");
+                        }
+                        case "E" -> {
+                            output.writeUTF("E");
+                            System.out.println("\nTerminating program...\n");
+                            continue;
+                        }
+                        default -> System.out.println("Invalid Input, Try Again!");
+                    }
+                    String result = input.readUTF();
+                    System.out.println(result);
                 } catch (IOException var4) {
                     System.out.println(var4);
                 }
             }
-        } catch (IOException var2) {
-            throw new RuntimeException(var2);
-        }
 
-        try {
-            input.close();
-            output.close();
-            socket.close();
+            try {
+                input.close();
+                output.close();
+                socket.close();
+            } catch (IOException e) {
+                System.out.println(e);
+            }
         } catch (IOException e) {
             System.out.println(e);
         }
-
     }
 
-    public static void Server() {
+    public static void ServerMain() {
+        int curr = 0;
         try {
-            ServerSocket var0 = new ServerSocket(port);
-            System.out.println("Server started");
-            System.out.println("Waiting for a client ...");
-            socket = var0.accept();
-            System.out.println("Client accepted");
-            input = new DataInputStream(socket.getInputStream());
-            output = new DataOutputStream(socket.getOutputStream());
-            String var1 = "";
+            ServerSocket server = new ServerSocket(port);
+            while (curr <= 2) {
 
-            while (!var1.equals("Over")) {
-                try {
-                    var1 = input.readUTF();
-                    System.out.println(var1);
-                    if (var1.equals("Send Quote")) {
-                        Random var2 = new Random();
-                        int var3 = var2.nextInt(1660);
-                        String quote = ((String[]) quotes.get(var3))[1];
-                        System.out.println(quote);
-                        output.writeUTF(quote);
-                    }
-                } catch (IOException var4) {
-                    System.out.println(var4);
-                }
+                System.out.println("[MAIN] Server started");
+                System.out.println("[MAIN] Waiting for a client ...");
+                Socket socket = server.accept();
+                System.out.println("[MAIN] Client accepted");
+                ServerWorker(socket);
+                curr++;
             }
-
-            System.out.println("Closing connection");
-            socket.close();
-            input.close();
         } catch (IOException var5) {
             System.out.println(var5);
         }
+    }
 
+
+    public static void ServerWorker(Socket localSocket) {
+        new Thread(() -> {
+            try {
+                DataInputStream input = new DataInputStream(localSocket.getInputStream());
+                DataOutputStream output = new DataOutputStream(localSocket.getOutputStream());
+                System.out.println("[Worker " + localSocket.getPort() + "] Created New Server Thread");
+
+                String response = "";
+
+                while (!response.equals("E")) {
+                    try {
+                        System.out.println("[Worker " + localSocket.getPort() + "] Waiting for Client Request");
+                        response = input.readUTF();
+                        System.out.println("[Worker " + localSocket.getPort() + "] Received value: " + response);
+                        switch (response) {
+                            case "Q" -> {
+                                output.writeUTF(qotd[1]);
+                                System.out.println("[Worker " + localSocket.getPort() + "] Sent Quote");
+                            }
+                            case "D" -> {
+                                output.writeUTF(qotd[2]);
+                                System.out.println("[Worker " + localSocket.getPort() + "] Sent Date");
+                            }
+                            case "A" -> {
+                                output.writeUTF(qotd[0]);
+                                System.out.println("[Worker " + localSocket.getPort() + "] Sent Author");
+                            }
+                            case "R" -> {
+                                output.writeUTF("Quote: " + qotd[1] + " Author: " + qotd[0] + " Date: " + qotd[2]);
+                                System.out.println("[Worker " + localSocket.getPort() + "] Sent Response");
+                            }
+                            case "E" -> {
+                                System.out.println("\n[Worker " + localSocket.getPort() + "] Terminating program...\n");
+                            }
+                            default -> System.out.println("[Worker " + localSocket.getPort() + "] Invalid Input!");
+                        }
+                    } catch (IOException var4) {
+                        System.out.println(var4);
+                    }
+                }
+                System.out.println("[Worker] Closing connection");
+                localSocket.close();
+                input.close();
+                output.close();
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+        }).start();
     }
 
     public static List<String[]> readFile(File csvFile) throws Exception {

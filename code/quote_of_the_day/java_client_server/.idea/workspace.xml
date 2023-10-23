@@ -5,27 +5,9 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="deef24a6-9d21-4670-ba9e-088bce4c22cb" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/WOTD.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Server Client/.idea/.gitignore" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Server Client/.idea/codeStyles/Project.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/codeStyles/Project.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Server Client/.idea/codeStyles/codeStyleConfig.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/codeStyles/codeStyleConfig.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Server Client/.idea/compiler.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Server Client/.idea/encodings.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Server Client/.idea/jarRepositories.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Server Client/.idea/libraries/Maven__com_opencsv_opencsv_4_1.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Server Client/.idea/libraries/Maven__commons_beanutils_commons_beanutils_1_9_3.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Server Client/.idea/libraries/Maven__commons_collections_commons_collections_3_2_2.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Server Client/.idea/libraries/Maven__commons_logging_commons_logging_1_2.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Server Client/.idea/libraries/Maven__org_apache_commons_commons_lang3_3_6.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Server Client/.idea/libraries/Maven__org_apache_commons_commons_text_1_1.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Server Client/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Server Client/.idea/modules.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/modules.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Server Client/.idea/uiDesigner.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Server Client/.idea/vcs.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/vcs.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Server Client/Server Client.iml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/java_client_server.iml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Server Client/pom.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Server Client/src/main/java/WOTD.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Server Client/src/main/java/WOTD.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/WOTD.class" beforeDir="false" afterPath="$PROJECT_DIR$/WOTD.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/WOTD.java" beforeDir="false" afterPath="$PROJECT_DIR$/WOTD.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
