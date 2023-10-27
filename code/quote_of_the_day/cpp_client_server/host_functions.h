@@ -30,6 +30,8 @@ int socket_setup(int *socket, struct sockaddr_in *socket_addr, char* ip, int por
     perror("An error occurred setting the socket operation!");
     exit(EXIT_FAILURE);
   } else {
+    bzero(socket_addr, sizeof(socket_addr));
+    setsockopt(*socket, SOL_SOCKET, SO_REUSEADDR | SO_REUSEPORT, &opt, sizeof(opt));
     socket_addr->sin_family = AF_INET;
   if (port == 0) { // sets to default port num
     // htons converts a byte order into a network byte order
@@ -78,30 +80,22 @@ int accept_socket(int *socket, struct sockaddr_in sock_addr, socklen_t sock_len)
 void close_one_socket(int *socket) { close(*socket); }
 
 string read_data(int *socket, ssize_t size){
-  char *data = new char[size];
-  string new_data;
-  size = read(*socket, data, size);
-  if (size < 0){//check if data was recevied
-    cout << "The data was not received!" << endl;
-    close_one_socket(socket);
+  char buffer[size];
+  string new_data; 
+  int n;
+  if ((n = recv(*socket, buffer, size, 0)) > 0){
+    new_data.append(buffer, buffer + n);
   } else {
-    read(*socket, data, size);
-    new_data = data;
+    cout << "There was an error reading the data from the buffer!" << endl;
   }
   return new_data;
 }
 
-ssize_t write_data(int *socket, string *data){
-  char *data_array = new char[data->length() + 1];
-  strcpy(data_array, data->c_str());
-  ssize_t size = write(*socket, data_array, strlen(data_array));
-  if (size < 0){//check if data was sent
-    cout << "The data was not sent" << endl;
-    close_one_socket(socket);
-  } else {
-    write(*socket, data_array, strlen(data_array));
+void write_data(int *socket, string data_q){
+  int n;
+  if ((n = send(*socket, data_q.data(), data_q.size(), 0)) < 0){
+    cout << "There was an error writing the data!" << endl;
   }
-  return size;
 }
 
 int check_connection(int *socket){
@@ -119,9 +113,10 @@ string ask_for_data(){
   cout << "a) Author" << endl;
   cout << "q) Quote" << endl;
   cout << "d) Date" << endl;
+  cout << "r) Request everything" << endl;
+  cout << "e) Exit" << endl;
   cout << "--------------------------------------\n" << endl;
   cin >> ask;
-  cout << endl;
   return ask;
 }
 
