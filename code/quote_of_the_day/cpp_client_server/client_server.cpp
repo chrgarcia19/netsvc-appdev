@@ -111,6 +111,10 @@ int main(int argc, char *argv[]) {
         } else if (data_ask == "r"){
           write_data(&socket, curr_quote);
           cout << "\nWaiting to send all available data...\n" << endl;
+        } else if (data_ask == "n"){
+          cout << "\nSelecting a new quote\n" << endl;
+          random = rand() % MAX_QUOTES;
+          write_data(&socket, "A new quote was selected!");
         } else if (data_ask == "e"){
           write_data(&socket, "e");
           done = true;
@@ -134,6 +138,9 @@ int main(int argc, char *argv[]) {
         } else if (data_ask == "r"){
           write_data(&socket, "r");
           cout << "\nWaiting to receive all available data...\n" << endl;
+        } else if (data_ask == "n"){
+          write_data(&socket, "n");
+          cout << "\nWaiting for a new quote to be selected...\n" << endl;
         } else if (data_ask == "e"){
           write_data(&socket, "e");
           done = true;
@@ -142,8 +149,24 @@ int main(int argc, char *argv[]) {
           cout << "\nIncorrect input! Please try again!\n" << endl;
         }
 
+
         read_quote = read_data(&socket, BUFFER_SIZE);
-        cout << read_quote << endl;
+        Quote quote_recv = Quote();
+        if (data_ask == "q"){
+          quote_recv.setQuote(read_quote);
+          quote_recv.printQuote(); 
+        } else if (data_ask == "d"){
+          quote_recv.setDate(read_quote);
+          quote_recv.printDate(); 
+        } else if (data_ask == "a"){
+          quote_recv.setName(read_quote);
+          quote_recv.printName(); 
+        } else if (data_ask == "r"){
+          quote_recv = quote_recv.stringToQuote(read_quote);
+          quote_recv.toString();
+        } else if (data_ask == "n"){
+          cout << read_quote << endl;
+        }
       }
     }
 

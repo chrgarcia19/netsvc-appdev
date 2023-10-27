@@ -41,9 +41,21 @@ public:
     Quote newQuote = Quote(name, quote, after);
     return newQuote;
   }
+  
+  void printName(){
+    cout << "Author: " << this->name << endl;
+  }
+
+  void printQuote(){
+    cout << "Quote: " << this->quote << endl;
+  }
+
+  void printDate(){
+    cout << "Date: " << this->date << endl;
+  }
 
   void toString() {
-    cout << "Name: " << this->name << "\nQuote: " << this->quote
+    cout << "Author: " << this->name << "\nQuote: " << this->quote
     << "\nDate: " << this->date << endl;
   }
 

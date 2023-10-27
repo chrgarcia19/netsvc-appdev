@@ -113,7 +113,8 @@ string ask_for_data(){
   cout << "a) Author" << endl;
   cout << "q) Quote" << endl;
   cout << "d) Date" << endl;
-  cout << "r) Request everything" << endl;
+  cout << "r) All data" << endl;
+  cout << "n) New quote" << endl;
   cout << "e) Exit" << endl;
   cout << "--------------------------------------\n" << endl;
   cin >> ask;
