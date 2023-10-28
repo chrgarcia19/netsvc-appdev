@@ -1,10 +1,39 @@
 #include "host_functions.h"
 #include <fstream>
+#include <thread>
 
 #define QUOTES_FILE "../quotes.csv"
 #define MAX_QUOTES 1662
 #define MAX_CONNECTIONS 10
 #define BUFFER_SIZE 1024
+
+string handle_data_request(int socket, string data_ask){
+  data_ask = ask_for_data();
+
+  if (data_ask == "q"){
+    write_data(&socket, "q");
+    cout << "\nWaiting to receive a quote...\n" << endl;
+  } else if (data_ask == "d"){
+    write_data(&socket, "d");
+    cout << "\nWaiting to receive a date...\n" << endl;
+  } else if (data_ask == "a"){
+    write_data(&socket, "a");
+    cout << "\nWaiting to receive an author...\n" << endl;
+  } else if (data_ask == "r"){
+    write_data(&socket, "r");
+    cout << "\nWaiting to receive all available data...\n" << endl;
+  } else if (data_ask == "n"){
+    write_data(&socket, "n");
+    cout << "\nWaiting for a new quote to be selected...\n" << endl;
+  } else if (data_ask == "e"){
+    write_data(&socket, "e");
+    cout << "\nEnding program...\n" << endl;
+  } else {
+    cout << "\nIncorrect input! Please try again!\n" << endl;
+    data_ask = handle_data_request(socket, data_ask);
+  }
+  return data_ask;
+}
 
 int main(int argc, char *argv[]) {
   int port;
@@ -97,8 +126,6 @@ int main(int argc, char *argv[]) {
 
         data_ask = read_data(&socket, BUFFER_SIZE);
 
-        cout << data_ask << endl;
-
         if (data_ask == "q"){
           write_data(&socket, quote_q);
           cout << "\nWaiting to send a quote...\n" << endl;
@@ -120,35 +147,14 @@ int main(int argc, char *argv[]) {
           done = true;
           cout << "\nEnding program...\n" << endl;
         } else {
-          cout << "\nIncorrect input! Please try again!\n" << endl;
+          cout << "\nIncorrect input! Waiting to send data!\n" << endl;
         }
 
       } else if (client_or_server == "client"){
-        data_ask = ask_for_data();
-
-        if (data_ask == "q"){
-          write_data(&socket, "q");
-          cout << "\nWaiting to receive a quote...\n" << endl;
-        } else if (data_ask == "d"){
-          write_data(&socket, "d");
-          cout << "\nWaiting to receive a date...\n" << endl;
-        } else if (data_ask == "a"){
-          write_data(&socket, "a");
-          cout << "\nWaiting to receive an author...\n" << endl;
-        } else if (data_ask == "r"){
-          write_data(&socket, "r");
-          cout << "\nWaiting to receive all available data...\n" << endl;
-        } else if (data_ask == "n"){
-          write_data(&socket, "n");
-          cout << "\nWaiting for a new quote to be selected...\n" << endl;
-        } else if (data_ask == "e"){
-          write_data(&socket, "e");
+        data_ask = handle_data_request(socket, data_ask);
+        if (data_ask == "e"){
           done = true;
-          cout << "\nEnding program...\n" << endl;
-        } else {
-          cout << "\nIncorrect input! Please try again!\n" << endl;
         }
-
 
         read_quote = read_data(&socket, BUFFER_SIZE);
         Quote quote_recv = Quote();
@@ -169,7 +175,6 @@ int main(int argc, char *argv[]) {
         }
       }
     }
-
   } 
 
   cout << "The connection has been closed!" << endl;
