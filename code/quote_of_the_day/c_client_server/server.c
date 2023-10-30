@@ -15,6 +15,8 @@
 #define END_PORT_RANGE		4300
 #define DEFAULT_PORT		START_PORT_RANGE
 #define MAX_CONNECTIONS		30
+// 60 sec/min * 60 min/hr * 24 hr/day
+#define SECS_IN_DAY			60 * 60 * 24
 // Personal headers
 #include "networking.h"
 #include "csv.h"
@@ -40,13 +42,13 @@ int main(int argc, char** argv){
 	char * msg = calloc(MAX_STR_SIZE, sizeof(char));
 
 	csv_t quotes_csv;
-	load_csv(&quotes_csv, "new_quotes.csv");
+	load_csv(&quotes_csv, "new_quotes.csv", NULL);
+
+	int qotd = ((time(NULL) / SECS_IN_DAY) % quotes_csv.rows);
 
 	bzero(&server_addr, sizeof(server_addr));
 	for(int i = 0; i < MAX_CONNECTIONS; i++)
 		client_sockets[i] = 0;
-
-	srand(time(NULL));
 
 	connect_socket = socket_init();
 	setsockopt(
@@ -120,19 +122,19 @@ int main(int argc, char** argv){
 					client_sockets[i] = 0;
 				}
 				else{
-					if(incoming_char == 'q'){
-						send(
-							client_sockets[i],
-							,
-							MAX_STR_SIZE
-						);
-					}
-					if(incoming_char == 'a'){
-						
-					}
-					if(incoming_char == 'd'){
-						
-					}
+					memset(msg, 0, strlen(msg));
+					if(incoming_char == 'q')
+						msg = read_row_from_csv(&quotes_csv, qotd)[1];
+					else if(incoming_char == 'a')
+						msg = read_row_from_csv(&quotes_csv, qotd)[0];
+					else if(incoming_char == 'd')
+						msg = read_row_from_csv(&quotes_csv, qotd)[2];
+					send(
+						client_sockets[i],
+						msg,
+						MAX_STR_SIZE,
+						0
+					);
 				}
 			}
 		}
