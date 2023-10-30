@@ -11,7 +11,7 @@ typedef struct{
 	int rows, cols;
 } csv_t;
 
-void load_csv(csv_t * csv, const char * FILEPATH);
+void load_csv(csv_t * csv, const char * FILEPATH, char separator);
 char ** read_row_from_csv(csv_t * csv, int row_num);
 
 #endif
