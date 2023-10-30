@@ -13,26 +13,27 @@
 #define START_PORT_RANGE	4200
 #define END_PORT_RANGE		4300
 #define DEFAULT_PORT		START_PORT_RANGE
-#define MAX_MESSAGES		10
-#define FIB_INDEX_MAX		30
+#define MAX_STR_SIZE		256
 // Personal headers
 #include "networking.h"
 
 int main(int argc, char** argv){
+	printf("%d\n", argc);
 	if(argc > 4){
 		fprintf(stderr, "[ERROR] Invalid number of arguments!\n");
 		if(DEBUG_STATEMENTS)
-			printf("Usage: %s <port> <ip address> <options>\n", argv[0]);
+			printf("Usage: %s <port> <ip address> [OPTIONS]\n", argv[0]);
 	}
 
 	int port = (argc > 1 ? atoi(argv[1]) : 0);
 	char * ip_addr = (argc > 2 ? argv[2] : NULL);
 	char * options = (argc > 3 ? argv[3] : NULL);
 
-	int server_socket, client_socket;
+	int server_socket = 0, client_socket = 0;
 	struct sockaddr_in server_addr, client_addr;
 	socklen_t client_length;
-	pthread_t thread;
+	
+	char * msg = calloc(MAX_STR_SIZE, sizeof(char));
 
 	bzero(&server_addr, sizeof(server_addr));
 	bzero(&client_addr, sizeof(client_addr));

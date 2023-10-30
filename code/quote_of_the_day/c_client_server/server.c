@@ -17,24 +17,30 @@
 #define MAX_CONNECTIONS		30
 // Personal headers
 #include "networking.h"
+#include "csv.h"
 
 int main(int argc, char** argv){
-	if(argc > 4){
+	if(argc > 3){
 		fprintf(stderr, "[ERROR] Invalid number of arguments!\n");
 		if(DEBUG_STATEMENTS)
-			printf("Usage: %s <port> <ip address> <options>\n", argv[0]);
+			printf("Usage: %s <port> <ip address>\n", argv[0]);
 	}
 
 	int opt = 1;	// opt is true
 	int port = (argc > 1 ? atoi(argv[1]) : 0);
 	char * ip_addr = (argc > 2 ? argv[2] : NULL);
-	char * options = (argc > 3 ? argv[3] : NULL);
 
-	int connect_socket, new_socket, client_sockets[MAX_CONNECTIONS];
+	int connect_socket = 0, new_socket = 0, client_sockets[MAX_CONNECTIONS];
 	struct sockaddr_in server_addr;
 	socklen_t addr_length;
 	fd_set readfds;
 	int activity, max_sd;
+
+	char incoming_char = 0;
+	char * msg = calloc(MAX_STR_SIZE, sizeof(char));
+
+	csv_t quotes_csv;
+	load_csv(&quotes_csv, "new_quotes.csv");
 
 	bzero(&server_addr, sizeof(server_addr));
 	for(int i = 0; i < MAX_CONNECTIONS; i++)
@@ -43,7 +49,13 @@ int main(int argc, char** argv){
 	srand(time(NULL));
 
 	connect_socket = socket_init();
-	setsockopt(connect_socket, SOL_SOCKET, SO_REUSEADDR, (char *)&opt);
+	setsockopt(
+		connect_socket, 
+		SOL_SOCKET, 
+		SO_REUSEADDR, 
+		(char *)&opt, 
+		sizeof(opt)
+	);
 	port = socket_address_config(&server_addr, port, ip_addr);
 
 	bind(connect_socket, (struct sockaddr *)&server_addr, sizeof(server_addr));
@@ -70,7 +82,7 @@ int main(int argc, char** argv){
 			new_socket = accept(
 				connect_socket, 
 				(struct sockaddr *)&server_addr,
-				addr_length
+				&addr_length
 			);
 			printf(
 				"[LOG] New socket fd is %d, IP : %s, Port : %d \n", 
@@ -93,7 +105,35 @@ int main(int argc, char** argv){
 		
 		for(int i = 0; i < MAX_CONNECTIONS; i++){
 			if(FD_ISSET(client_sockets[i], &readfds)){
-				int 
+				read(client_sockets[i], &incoming_char, sizeof(char));
+				if(incoming_char == 0){
+					getpeername(
+						client_sockets[i], 
+						(struct sockaddr *)&server_addr,
+						&addr_length
+					);
+					printf(
+						"[LOG] Disconnecting client on port %d\n",
+						client_sockets[i]
+					);
+					close(client_sockets[i]);
+					client_sockets[i] = 0;
+				}
+				else{
+					if(incoming_char == 'q'){
+						send(
+							client_sockets[i],
+							,
+							MAX_STR_SIZE
+						);
+					}
+					if(incoming_char == 'a'){
+						
+					}
+					if(incoming_char == 'd'){
+						
+					}
+				}
 			}
 		}
 	}
@@ -104,6 +144,7 @@ int main(int argc, char** argv){
 		close(client_sockets[i]);
 	
 	close(connect_socket);
+	close(new_socket);
 
 	return EXIT_SUCCESS;
 }

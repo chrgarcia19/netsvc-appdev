@@ -43,7 +43,7 @@ int socket_address_config(struct sockaddr_in * const socket_addr, const int PORT
 void read_from_socket(int * const socket, void * data, size_t data_size){
 	if(data_size <= 4){
 		void * const read_data = malloc(data_size);
-		int* converted_data = malloc(sizeof(int));
+		int * converted_data = malloc(sizeof(int));
 
 		read(*socket, read_data, data_size);
 		*converted_data = ntohl(*(uint32_t *)read_data);
