@@ -7,21 +7,20 @@
 #include <unistd.h>
 
 #define DEFAULT_PORT 4200
+#define BUFFER_SIZE 1024
 
 /*NETWORKING METHODS*/
 int create_socket(){
   int new_socket;
-  if ((new_socket = socket(AF_INET, SOCK_STREAM, 0)) < 0){
-    perror("The socket was failed to be created!");
-    exit(EXIT_FAILURE);
-  } else {
-    /*AF_INET determines the type of IP address
+  /*AF_INET determines the type of IP address
     AF_INET is used for IPv4.
     SOCK_STREAM determines the type of connection.
     SOCK_STREAM is TCP*/
-    new_socket = socket(AF_INET, SOCK_STREAM, 0);
-    return new_socket;
+  if ((new_socket = socket(AF_INET, SOCK_STREAM, 0)) < 0){
+    perror("The socket was failed to be created!");
+    exit(EXIT_FAILURE);
   }
+  return new_socket;
 }
 
 int socket_setup(int *socket, struct sockaddr_in *socket_addr, char* ip, int port){
@@ -51,11 +50,9 @@ int socket_setup(int *socket, struct sockaddr_in *socket_addr, char* ip, int por
 }
 
 void bind_socket(int *socket, struct sockaddr_in addr){
-  if (bind(*socket, (struct sockaddr*)&addr, sizeof(addr))){
+  if (bind(*socket, (struct sockaddr*)&addr, sizeof(addr)) < 0){
     perror("The socket failed to bind!");
     exit(EXIT_FAILURE);
-  } else {
-    bind(*socket, (struct sockaddr*)&addr, sizeof(addr));
   }
 }
 
@@ -63,27 +60,31 @@ void listen_to_socket(int *socket, int num_connections){
   if (listen(*socket, num_connections) < 0){
     perror("The socket failed to listen!");
     exit(EXIT_FAILURE);
-  } else {
-    listen(*socket, num_connections);
-  }
+  } 
 }
 
 void connect_socket(int *socket, struct sockaddr_in ip_addr) {
-  connect(*socket, (struct sockaddr *)&ip_addr, sizeof(ip_addr));
+  if (connect(*socket, (struct sockaddr *)&ip_addr, sizeof(ip_addr)) < 0){
+    perror("The socket failed to connect!");
+    exit(EXIT_FAILURE);
+  }
 }
 
 int accept_socket(int *socket, struct sockaddr_in sock_addr, socklen_t sock_len){
-  *socket = accept(*socket, (struct sockaddr *)&sock_addr, &sock_len);
+  if ((*socket = accept(*socket, (struct sockaddr *)&sock_addr, &sock_len)) < 0){
+    perror("There was an error accepting a socket");
+    exit(EXIT_FAILURE);
+  }
   return *socket;
 }
 
 void close_one_socket(int *socket) { close(*socket); }
 
-string read_data(int *socket, ssize_t size){
-  char buffer[size];
+string read_data(int *socket){
+  char buffer[BUFFER_SIZE];
   string new_data; 
   int n;
-  if ((n = recv(*socket, buffer, size, 0)) > 0){
+  if ((n = recv(*socket, buffer, BUFFER_SIZE, 0)) > 0){
     new_data.append(buffer, buffer + n);
   } else {
     cout << "There was an error reading the data from the buffer!" << endl;
