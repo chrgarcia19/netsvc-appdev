@@ -1,23 +1,15 @@
 #include "host_functions.h"
-#include <arpa/inet.h>
-#include <cstring>
-#include <iostream>
-#include <netinet/in.h>
 #include <thread>
-#include <sys/socket.h>
-#include <unistd.h>
 
 using namespace std;
 
 void run(int socket) {
-  int timer = (2 + rand() % 9) * 1000;
-  int fib_input = rand() % 30;
-  cout << "[SEND] Fibonacci index: " << fib_input << endl;
-  write_data(&socket, fib_input);
-  fib_input = read_data(&socket, fib_input);
-  cout << "[RECEIVE] Fibonacci(" << fib_input << ") = " << fibonacci(fib_input)
+  int delay = (1 + rand() % 5) * 1000;
+  cout << "[Timer Thread] Setting timer in " << delay / 1000 << " seconds."
        << endl;
-  cout << "Resetting timer in: " << timer / 1000 << " seconds.\n" << endl;
+  int fib_input = rand() % 30;
+  cout << "[Timer Thread: SEND] Fibonacci input: " << fib_input << endl;
+  write_data(&socket, fib_input);
 }
 
 int main(int argc, char *argv[]) {
@@ -41,11 +33,12 @@ int main(int argc, char *argv[]) {
     host_order = atoi(argv[3]);
   }
 
-  int socket;
+  srand((unsigned)time(NULL));
+
+  int socket, fib_numb;
   struct sockaddr_in sock_addr;
   socklen_t sock_len;
-
-  srand((unsigned)time(NULL));
+  bool read_index = true;
 
   if (host_order == 1) {
     socket = create_socket();
@@ -56,11 +49,9 @@ int main(int argc, char *argv[]) {
     listen_to_socket(&socket, 1);
 
     cout << "Host 1 is waiting for a connection on port " << port << endl;
-    cout << endl;
 
     sock_len = sizeof(sock_addr);
     socket = accept(socket, (struct sockaddr *)&sock_addr, &sock_len);
-
   } else if (host_order == 2) {
     socket = create_socket();
 
@@ -70,16 +61,27 @@ int main(int argc, char *argv[]) {
   }
 
   for (int i = 0; i < 10; i++) {
-    cout << "Sending Message: " << i + 1 << "/10" << endl;
-    thread t1(run, socket);
-    t1.join();
+    cout << endl;
+    cout << "Message: " << i + 1 << "/10" << endl;
+    if (host_order == 1) {
+      thread t1(run, socket);
+      t1.join();
+      read_index = false;
+    }
+    fib_numb = read_data(&socket, fib_numb);
+    if (read_index) {
+      cout << "[Main Thread: RECEIVE] Fibonacci index: " << fib_numb << endl;
+
+      fib_numb = fibonacci(fib_numb);
+
+      write_data(&socket, fib_numb);
+
+    } else {
+      cout << "[Timer Thread: RECEIVE] Fibonacci result: " << fib_numb << endl;
+      read_index = true;
+    }
   }
-  
-  cout << "The thread has ended!" << endl;
 
-  close_two_sockets(&socket, &socket);
-
-  cout << "The sockets have been closed!" << endl;
-
+  close_one_socket(&socket);
   return 0;
 }

@@ -402,6 +402,5 @@ FodyWeavers.xsd
 # socket_fibonacci
 code/socket_fib/c_socket_app/server
 code/socket_fib/c_socket_app/client
-code/socket_fib/cpp_socket_app/host1
-code/socket_fib/cpp_socket_app/host2
-*.class
+code/socket_fib/cpp_socket_app/host
+code/quote_of_the_day/cpp_client_server/client_server

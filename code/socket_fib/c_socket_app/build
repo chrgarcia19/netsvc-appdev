@@ -1,3 +1,2 @@
 #!/bin/sh
-clang server.c -std=c17 -Wall -Wextra -pedantic -g -o server
-clang client.c -std=c17 -Wall -Wextra -pedantic -g -o client 
+clang main.c -std=c17 -Wall -Wextra -pedantic -g -o main
