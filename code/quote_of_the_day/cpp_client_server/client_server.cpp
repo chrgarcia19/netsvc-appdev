@@ -107,7 +107,10 @@ int main(int argc, char *argv[]) {
 
   random = rand() % MAX_QUOTES;
 
-  while(1){
+  while(true){
+    if (data_ask == "e"){
+      break;
+    }
     if (client_or_server == "server"){
         new_client = accept(server_socket, (struct sockaddr*)&new_addr, &addr_size);
         if (new_client < 0){
@@ -150,6 +153,8 @@ int main(int argc, char *argv[]) {
                 } else if (data_ask == "e"){
                     write_data(&new_client, "e");
                     cout << "\n[SERVER] Ending program...\n" << endl;
+                    close_one_socket(&new_client);
+                    close_one_socket(&server_socket);
                 } else {
                     cout << "\n[SERVER] Incorrect input! Waiting to send data!\n" << endl;
                 }
