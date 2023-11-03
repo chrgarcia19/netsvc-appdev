@@ -399,8 +399,12 @@ FodyWeavers.xsd
 # JetBrains Rider
 *.sln.iml
 
-# socket_fibonacci
+# Socket Fibonacci
 code/socket_fib/c_socket_app/server
 code/socket_fib/c_socket_app/client
 code/socket_fib/cpp_socket_app/host
+
+# Quote of the Day Client Server
 code/quote_of_the_day/cpp_client_server/client_server
+
+code/broadcast_cpu_temp/cpp_broadcast/broadcast

@@ -1,0 +1,7 @@
+# Compile with the latest version of c++, with warnings enables,
+# and GDB support.
+CPPFLAGS="-std=c++17 -Wall -Wpedantic -Wextra"
+
+for b in broadcast.cpp; do
+	"${CC:-g++}" $CPPFLAGS -o "${b%%.cpp}" "$b"
+done
