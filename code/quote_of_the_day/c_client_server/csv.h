@@ -11,8 +11,8 @@ typedef struct{
 	int rows, cols;
 } csv_t;
 
-void load_csv(csv_t * csv, const char * FILEPATH, char separator);
-char ** read_row_from_csv(csv_t * csv, int row_num);
+void csv_init(csv_t * csv, const char * FILEPATH, char separator);
+char ** read_row_from_csv(csv_t * csv, int row_index);
 
 #endif
 #ifndef CSV_SRC
@@ -22,7 +22,7 @@ char ** read_row_from_csv(csv_t * csv, int row_num);
 #include <string.h>
 #include <sys/types.h>
 
-void load_csv(csv_t * csv, const char * FILEPATH, char separator){
+void csv_init(csv_t * csv, const char * FILEPATH, char separator){
 	if(!csv || !FILEPATH)
 		return;
 
@@ -51,7 +51,7 @@ void load_csv(csv_t * csv, const char * FILEPATH, char separator){
 }
 
 char ** read_row_from_csv(csv_t * csv, int row_index){
-	char ** str_arr = (char ** )calloc(csv->cols * csv->rows * MAX_STR_SIZE, sizeof(char));
+	char ** str_arr = (char ** )calloc(csv->cols * MAX_STR_SIZE, sizeof(char));
 
 	if((row_index + 1) > csv->rows)
 		return NULL;
@@ -62,6 +62,15 @@ char ** read_row_from_csv(csv_t * csv, int row_index){
 
 	for(int i = 0; i < row_index; i++)
 		getline(&line, &line_len, fp);
+
+	char * current_str;
+	for(int c = 0; c < csv->cols; c++){
+		if(c == 0)
+			current_str = strtok(line, &csv->separator);
+		else
+			current_str = strtok(NULL, &csv->separator);
+		str_arr[c] = current_str;
+	}
 
 	return str_arr;
 }
