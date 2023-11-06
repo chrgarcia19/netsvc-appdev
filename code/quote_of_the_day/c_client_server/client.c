@@ -2,7 +2,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <unistd.h>
-#include <strings.h>
+#include <string.h>
 #include <pthread.h>
 // Networking includes
 #include <arpa/inet.h>
@@ -49,6 +49,25 @@ int main(int argc, char** argv){
 		(struct sockaddr *)&server_addr, 
 		sizeof(server_addr)
 	);
+
+	if(strchr(options, 'q')){
+		send(client_socket, "q", sizeof(char), 0);
+		read(client_socket, msg, MAX_STR_SIZE);
+		printf("Quote: %s\n", msg);
+		memset(msg, 0, strlen(msg));
+	}
+	if(strchr(options, 'a')){
+		send(client_socket, "a", sizeof(char), 0);
+		read(client_socket, msg, MAX_STR_SIZE);
+		printf("Author: %s\n", msg);
+		memset(msg, 0, strlen(msg));
+	}
+	if(strchr(options, 'd')){
+		send(client_socket, "d", sizeof(char), 0);
+		read(client_socket, msg, MAX_STR_SIZE);
+		printf("Date: %s\n", msg);
+		memset(msg, 0, strlen(msg));
+	}
 
 	close(client_socket);
 	close(server_socket);

@@ -2,6 +2,6 @@
 # and GDB support.
 CPPFLAGS="-std=c++17 -Wall -Wpedantic -Wextra"
 
-for dspp in client_server.cpp; do
-	"${CC:-g++}" $CPPFLAGS -o "${dspp%%.cpp}" "$dspp"
+for b in broadcast.cpp; do
+	"${CC:-g++}" $CPPFLAGS -o "${b%%.cpp}" "$b"
 done
