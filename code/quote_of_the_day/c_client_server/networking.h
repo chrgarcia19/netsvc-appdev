@@ -5,7 +5,8 @@
 #define NETWORKING_H
 
 int socket_init(void);
-int socket_address_config(struct sockaddr_in * const socket_addr, const int PORT, const char * const IP);
+int address_config(struct sockaddr_in * const addr, const int PORT, const char * const IP);
+int socket_config(int * socket);
 void read_from_socket(int * const socket, void * data, size_t data_size);
 void write_to_socket (int * const socket, void * data, size_t data_size);
 #endif
@@ -27,21 +28,39 @@ int socket_init(void){
 	return socket(AF_INET, SOCK_STREAM, 0);
 }
 
-int socket_address_config(struct sockaddr_in * const socket_addr, const int PORT, const char * const IP){
-	if(!socket_addr)
-		return -1;	//return if socket_addr is NULL
-	bzero(socket_addr, sizeof(*socket_addr));
+int address_config(struct sockaddr_in * const addr, const int PORT, const char * const IP){
+	if(!addr)
+		return -1;	//return if addr is NULL
+	bzero(addr, sizeof(*addr));
 	
 	int using_port = (PORT ? PORT : DEFAULT_PORT);	//if port is non-zero, use port
-	socket_addr->sin_port = htons(using_port);
-	socket_addr->sin_family = AF_INET;
-	socket_addr->sin_addr.s_addr = (IP ? inet_addr(IP) : htonl(INADDR_ANY));
+	addr->sin_port = htons(using_port);
+	addr->sin_family = AF_INET;
+	addr->sin_addr.s_addr = (IP ? inet_addr(IP) : htonl(INADDR_ANY));
 
 	return using_port;	//returns the port number used
 }
 
+int socket_config(int * socket){
+	int opt = 1;
+	int err = setsockopt(
+		*socket,
+		SOL_SOCKET,
+		SO_REUSEADDR | SO_REUSEPORT,
+		&opt,
+		sizeof(opt)
+	);
+
+	if(err)
+		return -1;
+	else
+		return *socket;
+}
+
 void read_from_socket(int * const socket, void * data, size_t data_size){
-	if(data_size <= 4){
+	if(!data)
+		data = malloc(data_size);
+	if(data_size <= 4){	//treat as uint32 and convert as such
 		void * const read_data = malloc(data_size);
 		int * converted_data = malloc(sizeof(int));
 
@@ -51,15 +70,19 @@ void read_from_socket(int * const socket, void * data, size_t data_size){
 		data = converted_data;
 	}
 	else{
-		printf("[ERROR] data_size passed to read_from_socket was larger than an int!\n");
+		memset(data, 0, data_size);
+		read(*socket, data, data_size);
 	}
 }
 
 void write_to_socket (int * const socket, void * data, size_t data_size){
-	if(data_size > 4)
-		return;	//currently this is unsupported
-	int send_data = htonl(*(uint32_t *)data);
-	write(*socket, &send_data, data_size);
+	if(data_size <= 4){ //treat as uint32 and convert as such
+		int send_data = htonl(*(uint32_t *)data);
+		write(*socket, &send_data, data_size);
+	}
+	else{
+		write(*socket, data, data_size);
+	}
 }
 
 #endif
