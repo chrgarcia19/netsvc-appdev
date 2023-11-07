@@ -19,15 +19,16 @@
 #include "networking.h"
 
 void error(char * msg){
-	printf("%s\n", msg);
+	perror(msg);
 	exit(EXIT_FAILURE);
 }
 
 int main(int argc, char** argv){
-	if(DEBUG_STATEMENTS)
+	if(DEBUG_STATEMENTS){
 		printf("[DEBUG] Number of args: %d\n", argc);
+	}
 	
-	if(argc > 4){
+	if(argc < 4){
 		printf("[ERROR] Invalid number of arguments!\n");
 		printf("Usage: %s <port> <ip address> [OPTIONS]\n", argv[0]);
 		return EXIT_FAILURE;
@@ -37,7 +38,7 @@ int main(int argc, char** argv){
 	char * ip_addr = (argc > 2 ? argv[2] : NULL);
 	char * options = (argc > 3 ? argv[3] : NULL);
 
-	int client_socket;
+	int client_socket, errval;
 	struct sockaddr_in server_addr;
 	char * msg = (char *)malloc(MAX_STR_SIZE);
 
@@ -50,29 +51,62 @@ int main(int argc, char** argv){
 	socket_config(&client_socket);
 	port = address_config(&server_addr, port, ip_addr);
 
-	connect(
+	errval = connect(
 		client_socket, 
 		(struct sockaddr *)&server_addr, 
 		sizeof(server_addr)
 	);
 
+	if(errval < 0)
+		error("[ERROR] Connecting to the server");
+
 	if(strchr(options, 'q')){
-		send(client_socket, "q", sizeof(char), 0);
-		read(client_socket, msg, MAX_STR_SIZE);
+		errval = send(client_socket, "q", sizeof(char), 0);
+
+		if(errval < 0)
+			error("[ERROR] Sending character q");
+
+		errval = read(client_socket, msg, MAX_STR_SIZE);
+
+		if(errval < 0)
+			error("[ERROR] Reading quote");
+
 		printf("Quote: %s\n", msg);
 		memset(msg, 0, MAX_STR_SIZE);
 	}
 	if(strchr(options, 'a')){
-		send(client_socket, "a", sizeof(char), 0);
-		read(client_socket, msg, MAX_STR_SIZE);
+		errval = send(client_socket, "a", sizeof(char), 0);
+
+		if(errval < 0)
+			error("[ERROR] Sending character a");
+
+		errval = read(client_socket, msg, MAX_STR_SIZE);
+
+		if(errval < 0)
+			error("[ERROR] Reading author");
+
 		printf("Author: %s\n", msg);
 		memset(msg, 0, MAX_STR_SIZE);
 	}
 	if(strchr(options, 'd')){
-		send(client_socket, "d", sizeof(char), 0);
-		read(client_socket, msg, MAX_STR_SIZE);
+		errval = send(client_socket, "d", sizeof(char), 0);
+		
+		if(errval < 0)
+			error("[ERROR] Sending character d");
+
+		errval = read(client_socket, msg, MAX_STR_SIZE);
+
+		if(errval < 0)
+			error("[ERROR] Reading date");
+
 		printf("Date: %s\n", msg);
 		memset(msg, 0, MAX_STR_SIZE);
+	}
+	if(strchr(options, 'e')){
+		errval = send(client_socket, "e", sizeof(char), 0);
+
+		if(errval < 0)
+			error("[ERROR] Sending character e");
 	}
 
 	close(client_socket);

@@ -31,8 +31,16 @@ typedef enum {
 } CSV_STRUCTURE;
 
 void error(char * msg){
-	printf("%s\n", msg);
+	perror(msg);
 	exit(EXIT_FAILURE);
+}
+
+char * format_author(char * author){
+	return strtok(author, ",");
+}
+
+char * format_date(char * date){
+	return strtok(date, ",");
 }
 
 int main(int argc, char** argv){
@@ -49,7 +57,7 @@ int main(int argc, char** argv){
 
 	int close_server = 0;
 
-	int server_socket, new_client_socket;
+	int server_socket, new_client_socket, errval;
 	struct sockaddr_in server_addr, client_addr, new_addr;
 	socklen_t addr_len, new_addr_len;
 	pid_t client_pid;
@@ -76,7 +84,10 @@ int main(int argc, char** argv){
 	new_addr_len = sizeof(new_addr);
 
 	bind(server_socket, (struct sockaddr *)&server_addr, addr_len);
-	listen(server_socket, MAX_CONNECTIONS);	//max of 3 pending connections
+	errval = listen(server_socket, MAX_CONNECTIONS);
+
+	if(errval < 0)
+		error("[ERROR] Listening for incoming connections");
 
 	printf("[LOG] Host is waiting for connections on port %d\n", port);
 	
@@ -102,43 +113,66 @@ int main(int argc, char** argv){
 			error("[ERROR] Forking the process");
 
 		if(client_pid == 0){
+			close(server_socket);
+
 			char ** strarr = (char **)malloc(MAX_STR_SIZE * quotes_csv.cols);
 			while(incoming_char != 'e'){
 				strarr = read_row_from_csv(&quotes_csv, qotd);
+				errval = read_from_socket(
+					&new_client_socket,
+					&incoming_char,
+					sizeof(char)
+				);
+
+				if(errval < 0)
+					error("[ERROR] Read from client");
+
 				switch(incoming_char){
 					case 'q':{
-						write_to_socket(
+						errval = write_to_socket(
 							&new_client_socket, 
 							strarr[QUOTE], 
 							MAX_STR_SIZE
 						);
+
+						if(errval < 0)
+							error("[ERROR] Writing quote to client");
+						
 						printf(
-							"[LOG] Sending quote %s to client...\n",
+							"[LOG] Sending quote \"%s\" to client...\n",
 							strarr[QUOTE]
 						);
 						break;
 					}
 					case 'a':{
-						write_to_socket(
+						errval = write_to_socket(
 							&new_client_socket, 
-							strarr[AUTHOR], 
+							format_author(strarr[AUTHOR]), 
 							MAX_STR_SIZE
 						);
+
+						if(errval < 0)
+							error("[ERROR] Writing author to client");
+						
 						printf(
 							"[LOG] Sending author %s to client...\n",
-							strarr[AUTHOR]
+							format_author(strarr[AUTHOR])
 						);
 						break;
 					}
 					case 'd':{
-						write_to_socket(
+						errval = write_to_socket(
 							&new_client_socket, 
-							strarr[DATE], 
+							format_date(strarr[DATE]),
 							MAX_STR_SIZE
 						);
+
+						if(errval < 0)
+							error("[ERROR] Writing date to client");
+
 						printf(
 							"[LOG] Sending date %s to client...\n",
-							strarr[DATE]
+							format_date(strarr[DATE])
 						);
 						break;
 					}
@@ -147,6 +181,9 @@ int main(int argc, char** argv){
 						close(new_client_socket);
 						break;
 					}
+					case 0:
+					case '\n':
+						break;
 					default:{
 						printf(
 							"[ERROR] Invalid character received: %c (%d)\n",

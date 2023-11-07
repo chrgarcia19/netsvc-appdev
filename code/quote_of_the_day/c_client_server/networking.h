@@ -7,8 +7,8 @@
 int socket_init(void);
 int address_config(struct sockaddr_in * const addr, const int PORT, const char * const IP);
 int socket_config(int * socket);
-void read_from_socket(int * const socket, void * data, size_t data_size);
-void write_to_socket (int * const socket, void * data, size_t data_size);
+int read_from_socket(int * const socket, void * data, size_t data_size);
+int write_to_socket (int * const socket, void * data, size_t data_size);
 #endif
 
 #ifndef NETWORKING_SRC
@@ -57,32 +57,46 @@ int socket_config(int * socket){
 		return *socket;
 }
 
-void read_from_socket(int * const socket, void * data, size_t data_size){
+int read_from_socket(int * const socket, void * data, size_t data_size){
+	int errval;
+
 	if(!data)
 		data = malloc(data_size);
 	if(data_size <= 4){	//treat as uint32 and convert as such
 		void * const read_data = malloc(data_size);
 		int * converted_data = malloc(sizeof(int));
 
-		read(*socket, read_data, data_size);
+		errval = recv(
+			*socket,
+			data,
+			data_size,
+			0
+		);
+
 		*converted_data = ntohl(*(uint32_t *)read_data);
 
 		data = converted_data;
 	}
 	else{
 		memset(data, 0, data_size);
-		read(*socket, data, data_size);
+		errval = read(*socket, data, data_size);
 	}
+
+	return errval;
 }
 
-void write_to_socket (int * const socket, void * data, size_t data_size){
+int write_to_socket (int * const socket, void * data, size_t data_size){
+	int errval;
+
 	if(data_size <= 4){ //treat as uint32 and convert as such
 		int send_data = htonl(*(uint32_t *)data);
-		write(*socket, &send_data, data_size);
+		errval = write(*socket, &send_data, data_size);
 	}
 	else{
-		write(*socket, data, data_size);
+		errval = write(*socket, data, data_size);
 	}
+
+	return errval;
 }
 
 #endif
