@@ -1,0 +1,3 @@
+#!/bin/sh
+clang server.c -std=gnu17 -Wall -Wextra -pedantic -g -o server
+clang client.c -std=gnu17 -Wall -Wextra -pedantic -g -o client
