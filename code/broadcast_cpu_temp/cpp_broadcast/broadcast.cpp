@@ -72,18 +72,10 @@ int main(int argc, char *argv[]){
 
   int socket_send, socket_recv; 
   struct sockaddr_in send_addr, recv_addr;
-  struct ip_mreq recv_mreq;
   unsigned int send_len, recv_len;
   //pid_t send_pid;
 
   if (client_or_server == "server"){
-    socket_send = create_socket();
-    memset(&send_addr, 0, sizeof(send_addr));
-    send_addr.sin_family = AF_INET;
-    send_addr.sin_port = htons(port);
-    send_addr.sin_addr.s_addr = inet_addr(ip);
-    send_len = sizeof(send_addr);
-  } else if (client_or_server == "client"){
     socket_recv = create_socket();
     memset(&recv_addr, 0, sizeof(recv_addr));
     recv_addr.sin_family = AF_INET;
@@ -92,6 +84,13 @@ int main(int argc, char *argv[]){
     recv_len = sizeof(recv_addr);
 
     bind_socket(socket_recv, recv_addr);
+  } else if (client_or_server == "client"){
+    socket_send = create_socket();
+    memset(&send_addr, 0, sizeof(send_addr));
+    send_addr.sin_family = AF_INET;
+    send_addr.sin_port = htons(port);
+    send_addr.sin_addr.s_addr = inet_addr(ip);
+    send_len = sizeof(send_addr);
   }
 
   string buffer;
@@ -102,11 +101,11 @@ int main(int argc, char *argv[]){
     cpu_usage = getCurrentValue();
     usage_str = to_string(cpu_usage);
     if (client_or_server == "server"){
-      write_data(socket_send, send_addr, send_len, usage_str);
-      sleep(5);
-    } else if (client_or_server == "client"){
       buffer = read_data(socket_recv, recv_addr, recv_len);
       cout << "The CPU usage is: " << buffer << "%" << endl;
+      sleep(5);
+    } else if (client_or_server == "client"){
+      write_data(socket_send, send_addr, send_len, usage_str);
       sleep(5);
     }
   }
