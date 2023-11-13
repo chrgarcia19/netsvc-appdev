@@ -1,7 +1,11 @@
+import com.sun.management.OperatingSystemMXBean;
+
 import java.io.*;
+import java.lang.management.ManagementFactory;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.InetAddress;
+import java.text.DecimalFormat;
 import java.util.Scanner;
 
 public class CpuBroadcast {
@@ -48,7 +52,7 @@ public class CpuBroadcast {
         // loop while user not enters "bye"
         while (true)
         {
-            String temp = GetPing();
+            String temp = GetLoad();
 
             // convert the String input into the byte array.
             buf = temp.getBytes();
@@ -82,39 +86,17 @@ public class CpuBroadcast {
             // Step 3 : revieve the data in byte buffer.
             ds.receive(DpReceive);
 
-            System.out.println("Client: " + data(receive));
+            System.out.println("Client: " + data(receive) + "%");
 
             // Clear the buffer after every message.
             receive = new byte[65535];
         }
     }
 
-    public static String GetPing() throws IOException {
-        // creating the sub process, execute system command
-        ProcessBuilder build = new ProcessBuilder("ping", "www.google.com");
-        Process process = build.start();
-        BufferedReader input = new BufferedReader(new InputStreamReader
-                (process.getInputStream()));
-        BufferedReader Error = new BufferedReader(new InputStreamReader
-                (process.getErrorStream()));
-        System.out.println("Standard output: ");
-        String s = "0ms";
-        while((s = input.readLine()) != null)
-        {
-            System.out.println(s);
-            if (s.contains("time")){
-                s = s.substring(s.indexOf("time") + 5);
-                System.out.println(s);
-                break;
-            }
-            System.out.println("\n22");
-        }
-        System.out.println("error (if any): ");
-        while((s = Error.readLine()) != null)
-        {
-            System.out.println(s);
-        }
-        return s;
+    public static String GetLoad() throws IOException {
+        OperatingSystemMXBean osBean = ManagementFactory.getPlatformMXBean(OperatingSystemMXBean.class);
+        double load = osBean.getCpuLoad() * 100;
+        return new DecimalFormat("#0.00").format(load);
     }
 
     // A utility method to convert the byte array
