@@ -88,15 +88,10 @@ int main(int argc, char *argv[]){
     memset(&recv_addr, 0, sizeof(recv_addr));
     recv_addr.sin_family = AF_INET;
     recv_addr.sin_port = htons(port);
-    recv_addr.sin_addr.s_addr = inet_addr(ip);
+    recv_addr.sin_addr.s_addr = inet_addr("0.0.0.0");
     recv_len = sizeof(recv_addr);
 
     bind_socket(socket_recv, recv_addr);
-
-    recv_mreq.imr_multiaddr.s_addr = inet_addr(ip);
-    recv_mreq.imr_interface.s_addr = inet_addr(LOCAL_IP);
-
-    setsockopt(socket_recv, IPPROTO_IP, IP_ADD_MEMBERSHIP, &recv_mreq, sizeof(recv_mreq));
   }
 
   string buffer;
