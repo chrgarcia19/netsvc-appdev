@@ -5,18 +5,19 @@
 #define NETWORKING_H
 
 int socket_init(void);
-int socket_address_config(struct sockaddr_in * const socket_addr, const int PORT, const char * const IP);
-void read_from_socket(int * const socket, void * data, size_t data_size);
-void write_to_socket (int * const socket, void * data, size_t data_size);
+int address_config(struct sockaddr_in * const addr, const int PORT, const char * const IP);
+int socket_config(int * socket);
+int read_from_socket(int * const socket, void * data, size_t data_size);
+int write_to_socket (int * const socket, void * data, size_t data_size);
 #endif
 
 #ifndef NETWORKING_SRC
 #define NETWORKING_SRC
 
-#include <stdio.h>
+#include <stdint.h>
 #include <unistd.h>
 #include <stdlib.h>
-#include <strings.h>
+#include <string.h>
 #include <arpa/inet.h>
 
 #ifndef DEFAULT_PORT
@@ -27,42 +28,75 @@ int socket_init(void){
 	return socket(AF_INET, SOCK_STREAM, 0);
 }
 
-int socket_address_config(struct sockaddr_in * const socket_addr, const int PORT, const char * const IP){
-	if(!socket_addr)
-		return -1;	//return if socket_addr is NULL
-	bzero(socket_addr, sizeof(*socket_addr));
+int address_config(struct sockaddr_in * const addr, const int PORT, const char * const IP){
+	if(!addr)
+		return -1;	//return if addr is NULL
+	memset(addr, 0, sizeof(*addr));
 	
 	int using_port = (PORT ? PORT : DEFAULT_PORT);	//if port is non-zero, use port
-	socket_addr->sin_port = htons(using_port);
-	socket_addr->sin_family = AF_INET;
-	socket_addr->sin_addr.s_addr = (IP ? inet_addr(IP) : htonl(INADDR_ANY));
+	addr->sin_port = htons(using_port);
+	addr->sin_family = AF_INET;
+	addr->sin_addr.s_addr = (IP ? inet_addr(IP) : htonl(INADDR_ANY));
 
 	return using_port;	//returns the port number used
 }
 
-void read_from_socket(int * const socket, void * data, size_t data_size){
-	if(data_size <= sizeof(long)){
-		void * const read_data = malloc(data_size);
-		long* converted_data = (long*)malloc(sizeof(long));
+int socket_config(int * socket){
+	int opt = 1;
+	int err = setsockopt(
+		*socket,
+		SOL_SOCKET,
+		SO_REUSEADDR | SO_REUSEPORT,
+		&opt,
+		sizeof(opt)
+	);
 
-		read(*socket, read_data, data_size);
-		*converted_data = ntohl(*(long *)read_data);
+	if(err)
+		return -1;
+	else
+		return *socket;
+}
+
+int read_from_socket(int * const socket, void * data, size_t data_size){
+	int errval;
+
+	if(!data)
+		data = malloc(data_size);
+	if(data_size <= sizeof(uint32_t)){	//treat as uint32 and convert as such
+		void * const read_data = malloc(data_size);
+		uint32_t * converted_data = malloc(sizeof(uint32_t));
+
+		errval = recv(
+			*socket,
+			data,
+			data_size,
+			0
+		);
+
+		*converted_data = ntohl(*(uint32_t *)read_data);
 
 		data = converted_data;
 	}
 	else{
-		printf("[ERROR] data_size passed to read_from_socket was larger than a long! This is currently unsupported\n");
+		memset(data, 0, data_size);
+		errval = read(*socket, data, data_size);
 	}
+
+	return errval;
 }
 
-void write_to_socket (int * const socket, void * data, size_t data_size){
-	if(data_size <= sizeof(long)){
-		long send_data = htonl(*(long *)data);
-		write(*socket, &send_data, data_size);
+int write_to_socket (int * const socket, void * data, size_t data_size){
+	int errval;
+
+	if(data_size <= sizeof(uint32_t)){ //treat as uint32 and convert as such
+		uint32_t send_data = htonl(*(uint32_t *)data);
+		errval = write(*socket, &send_data, data_size);
 	}
 	else{
-		printf("[ERROR] data_size passed to write_to_socket was larger than a long! This is currently unsupported\n");
-	}	
+		errval = write(*socket, data, data_size);
+	}
+
+	return errval;
 }
 
 #endif

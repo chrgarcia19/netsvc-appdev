@@ -4,11 +4,14 @@
 #ifndef NETWORKING_H
 #define NETWORKING_H
 
-int socket_init(void);
+int tcp_socket_init(void);
+int udp_socket_init(void);
 int address_config(struct sockaddr_in * const addr, const int PORT, const char * const IP);
 int socket_config(int * socket);
-int read_from_socket(int * const socket, void * data, size_t data_size);
-int write_to_socket (int * const socket, void * data, size_t data_size);
+int read_from_tcp_socket(int * const socket, void * data, size_t data_size);
+int read_from_udp_socket(int * const socket, void * data, size_t data_size, struct sockaddr_in * address, socklen_t * addr_len);
+int write_to_tcp_socket (int * const socket, void * data, size_t data_size);
+int write_to_udp_socket (int * const socket, void * data, size_t data_size, struct sockaddr_in * address);
 #endif
 
 #ifndef NETWORKING_SRC
@@ -24,8 +27,18 @@ int write_to_socket (int * const socket, void * data, size_t data_size);
 #define DEFAULT_PORT 4200
 #endif
 
-int socket_init(void){
+#define MAX_UDP_PACKET_SIZE 512
+
+#ifndef MAX_MSG_SIZE
+#define MAX_MSG_SIZE MAX_UDP_PACKET_SIZE
+#endif
+
+int tcp_socket_init(void){
 	return socket(AF_INET, SOCK_STREAM, 0);
+}
+
+int udp_socket_init(void){
+	return socket(AF_INET, SOCK_DGRAM, 0);
 }
 
 int address_config(struct sockaddr_in * const addr, const int PORT, const char * const IP){
@@ -57,7 +70,7 @@ int socket_config(int * socket){
 		return *socket;
 }
 
-int read_from_socket(int * const socket, void * data, size_t data_size){
+int read_from_tcp_socket(int * const socket, void * data, size_t data_size){
 	int errval;
 
 	if(!data)
@@ -85,7 +98,25 @@ int read_from_socket(int * const socket, void * data, size_t data_size){
 	return errval;
 }
 
-int write_to_socket (int * const socket, void * data, size_t data_size){
+int read_from_udp_socket(int * const socket, void * data, size_t data_size, struct sockaddr_in * address, socklen_t * addr_len){
+	int errval;
+
+	if(!data)
+		data = malloc(data_size);
+	memset(data, 0, data_size);
+	errval = recvfrom(
+		*socket, 
+		data, 
+		data_size,
+		MSG_WAITALL,
+		address,
+		addr_len
+	);
+
+	return errval;
+}
+
+int write_to_tcp_socket (int * const socket, void * data, size_t data_size){
 	int errval;
 
 	if(data_size <= 4){ //treat as uint32 and convert as such
@@ -95,6 +126,21 @@ int write_to_socket (int * const socket, void * data, size_t data_size){
 	else{
 		errval = write(*socket, data, data_size);
 	}
+
+	return errval;
+}
+
+int write_to_udp_socket (int * const socket, void * data, size_t data_size, struct sockaddr_in * address){
+	int errval;
+
+	errval = sendto(
+		*socket,
+		data,
+		data_size,
+		MSG_CONFIRM,
+		address,
+		sizeof(*address)
+	);
 
 	return errval;
 }

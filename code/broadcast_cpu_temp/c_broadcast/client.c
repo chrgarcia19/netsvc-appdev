@@ -3,6 +3,7 @@
 #include <stdlib.h>
 #include <unistd.h>
 #include <string.h>
+#include <signal.h>
 // Networking includes
 #include <arpa/inet.h>
 #include <netinet/in.h>
@@ -14,7 +15,6 @@
 #define START_PORT_RANGE	4200
 #define END_PORT_RANGE		4300
 #define DEFAULT_PORT		START_PORT_RANGE
-#define MAX_STR_SIZE		256
 // Personal headers
 #include "networking.h"
 
@@ -23,31 +23,77 @@ void error(char * msg){
 	exit(EXIT_FAILURE);
 }
 
+int looping = 1;
+uint32_t last_user = 0, last_user_low = 0, last_sys = 0, last_idle = 0;
+
+double get_cpu_percentage(void){
+	double percent;
+	FILE* stat;
+	uint32_t total_user, total_user_low, total_sys, total_idle, total;
+	uint32_t user_diff, user_low_diff, sys_diff, idle_diff, total_diff;
+
+	stat = fopen("/proc/stat", "r");
+	fscanf(
+		stat, 
+		"cpu %llu %llu %llu %llu", 
+		&total_user,
+		&total_user_low,
+		&total_sys, 
+		&total_idle
+	);
+	fclose(stat);
+
+	user_low_diff = (total_user_low - last_user_low);
+	user_diff     = (total_user     - last_user);
+	sys_diff      = (total_sys      - last_sys);
+	idle_diff     = (total_idle     - last_idle);
+
+	total_diff = user_diff + user_low_diff + sys_diff + idle_diff;
+
+	percent = (user_diff + user_low_diff + sys_diff) / (total_diff);
+
+	last_user_low = total_user_low;
+	last_user     = total_user;
+	last_sys      = total_sys;
+	last_idle     = total_idle;
+
+	return (percent * 100);
+}
+
+void nice_close(int sig){
+	looping = 0;
+	signal(sig, SIG_IGN);
+}
+
 int main(int argc, char** argv){
+	signal(SIGINT, nice_close);
 	if(DEBUG_STATEMENTS){
 		printf("[DEBUG] Number of args: %d\n", argc);
 	}
 	
-	if(argc < 4){
+	if(argc != 3){
 		printf("[ERROR] Invalid number of arguments!\n");
-		printf("Usage: %s <port> <ip address> [OPTIONS]\n", argv[0]);
+		printf("Usage: %s [PORT] [IP ADDRESS]\n", argv[0]);
 		return EXIT_FAILURE;
 	}
 
-	int port = (argc > 1 ? atoi(argv[1]) : 0);
-	char * ip_addr = (argc > 2 ? argv[2] : NULL);
-	char * options = (argc > 3 ? argv[3] : NULL);
+	int port = atoi(argv[1]);
+	char * ip_addr = argv[2];
 
 	int client_socket, errval;
-	struct sockaddr_in server_addr;
-	char * msg = (char *)malloc(MAX_STR_SIZE);
+	struct sockaddr_in server_addr, client_addr;
+	char * msg = (char *)malloc(MAX_MSG_SIZE);
+	socklen_t client_len;
 
 	memset(&server_addr, 0, sizeof(server_addr));
-	memset(msg, 0, MAX_STR_SIZE);
+	memset(&client_addr, 0, sizeof(client_addr));
+	memset(msg, 0, MAX_MSG_SIZE);
+
+	client_len = sizeof(client_addr);
 
 	srand(time(NULL));
 
-	client_socket = socket_init();
+	client_socket = udp_socket_init();
 	socket_config(&client_socket);
 	port = address_config(&server_addr, port, ip_addr);
 
@@ -60,53 +106,23 @@ int main(int argc, char** argv){
 	if(errval < 0)
 		error("[ERROR] Connecting to the server");
 
-	if(strchr(options, 'q')){
-		errval = send(client_socket, "q", sizeof(char), 0);
 
-		if(errval < 0)
-			error("[ERROR] Sending character q");
+	while(looping){
+		double percent = get_cpu_percentage();
+		snprintf(msg, MAX_MSG_SIZE, "%lf", percent);
+		printf("[LOG] Current CPU usage is %.2lf%%\n", percent);
 
-		errval = read(client_socket, msg, MAX_STR_SIZE);
+		sendto(
+			client_socket,
+			msg,
+			strlen(msg),
+			MSG_CONFIRM,
+			&client_addr,
+			client_len
+		);
 
-		if(errval < 0)
-			error("[ERROR] Reading quote");
-
-		printf("Quote: %s\n", msg);
-		memset(msg, 0, MAX_STR_SIZE);
-	}
-	if(strchr(options, 'a')){
-		errval = send(client_socket, "a", sizeof(char), 0);
-
-		if(errval < 0)
-			error("[ERROR] Sending character a");
-
-		errval = read(client_socket, msg, MAX_STR_SIZE);
-
-		if(errval < 0)
-			error("[ERROR] Reading author");
-
-		printf("Author: %s\n", msg);
-		memset(msg, 0, MAX_STR_SIZE);
-	}
-	if(strchr(options, 'd')){
-		errval = send(client_socket, "d", sizeof(char), 0);
-		
-		if(errval < 0)
-			error("[ERROR] Sending character d");
-
-		errval = read(client_socket, msg, MAX_STR_SIZE);
-
-		if(errval < 0)
-			error("[ERROR] Reading date");
-
-		printf("Date: %s\n", msg);
-		memset(msg, 0, MAX_STR_SIZE);
-	}
-	if(strchr(options, 'e')){
-		errval = send(client_socket, "e", sizeof(char), 0);
-
-		if(errval < 0)
-			error("[ERROR] Sending character e");
+		memset(msg, 0, MAX_MSG_SIZE);
+		sleep(1);
 	}
 
 	close(client_socket);

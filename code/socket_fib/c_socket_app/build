@@ -1,2 +1,2 @@
 #!/bin/sh
-clang main.c -std=c17 -Wall -Wextra -pedantic -g -o main
+clang main.c -std=gnu17 -Wall -Wextra -pedantic -g -o main
