@@ -3,6 +3,7 @@
 #include <unistd.h>
 #include <string.h>
 #include <signal.h>
+#include <time.h>
 // System includes
 #include <sys/time.h>
 #include <sys/socket.h>
@@ -45,16 +46,13 @@ int main(int argc, char** argv){
 	int port = (argc > 1 ? atoi(argv[1]) : 0);
 	char * ip_addr = (argc > 2 ? argv[2] : NULL);
 
-	int server_socket, new_client_socket, errval;
-	struct sockaddr_in server_addr, client_addr;
-	socklen_t server_addr_len, client_addr_len;
-	pid_t client_pid;
+	int server_socket, errval;
+	struct sockaddr_in server_addr;
+	socklen_t server_addr_len;
 
-	char incoming_char = 0;
 	char * msg = (char *)malloc(MAX_MSG_SIZE);
 
 	memset(&server_addr, 0, sizeof(server_addr));
-	memset(&client_addr, 0, sizeof(client_addr));
 	memset(&msg, 0, sizeof(MAX_MSG_SIZE));
 
 	srand(time(NULL));
@@ -64,7 +62,6 @@ int main(int argc, char** argv){
 	port = address_config(&server_addr, port, ip_addr);
 
 	server_addr_len = sizeof(server_addr);
-	client_addr_len = sizeof(client_addr);
 
 	errval = bind(
 		server_socket, 
@@ -78,7 +75,15 @@ int main(int argc, char** argv){
 	printf("[LOG] Host is waiting for packets on port %d\n", port);
 	
 	while(!close_server){
-		
+		read_from_udp_socket(
+			&server_socket, 
+			msg, 
+			MAX_MSG_SIZE, 
+			&server_addr, 
+			&server_addr_len
+		);
+		printf("The CPU usage is %s%%\n", msg);
+		sleep(1);
 	}
 	
 	close(server_socket);

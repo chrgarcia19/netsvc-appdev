@@ -18,19 +18,21 @@
 // Personal headers
 #include "networking.h"
 
+typedef unsigned long long ull;
+
 void error(char * msg){
 	perror(msg);
 	exit(EXIT_FAILURE);
 }
 
 int looping = 1;
-uint32_t last_user = 0, last_user_low = 0, last_sys = 0, last_idle = 0;
+ull last_user = 0, last_user_low = 0, last_sys = 0, last_idle = 0;
 
 double get_cpu_percentage(void){
 	double percent;
 	FILE* stat;
-	uint32_t total_user, total_user_low, total_sys, total_idle, total;
-	uint32_t user_diff, user_low_diff, sys_diff, idle_diff, total_diff;
+	ull total_user, total_user_low, total_sys, total_idle;
+	ull user_diff, user_low_diff, sys_diff, idle_diff, total_diff;
 
 	stat = fopen("/proc/stat", "r");
 	fscanf(
@@ -83,13 +85,10 @@ int main(int argc, char** argv){
 	int client_socket, errval;
 	struct sockaddr_in server_addr, client_addr;
 	char * msg = (char *)malloc(MAX_MSG_SIZE);
-	socklen_t client_len;
 
 	memset(&server_addr, 0, sizeof(server_addr));
 	memset(&client_addr, 0, sizeof(client_addr));
 	memset(msg, 0, MAX_MSG_SIZE);
-
-	client_len = sizeof(client_addr);
 
 	srand(time(NULL));
 
@@ -109,15 +108,14 @@ int main(int argc, char** argv){
 
 	while(looping){
 		double percent = get_cpu_percentage();
-		snprintf(msg, MAX_MSG_SIZE, "%lf", percent);
+		snprintf(msg, MAX_MSG_SIZE, "%.2lf", percent);
 		printf("[LOG] Current CPU usage is %.2lf%%\n", percent);
 
-		read_from_udp_socket(
+		write_to_udp_socket(
 			&client_socket,
 			msg,
 			strlen(msg),
-			&client_addr,
-			&client_len
+			&client_addr
 		);
 
 		memset(msg, 0, MAX_MSG_SIZE);

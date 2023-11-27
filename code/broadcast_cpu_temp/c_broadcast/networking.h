@@ -109,7 +109,7 @@ int read_from_udp_socket(int * const socket, void * data, size_t data_size, stru
 		data, 
 		data_size,
 		MSG_WAITALL,
-		address,
+		(struct sockaddr *)address,
 		addr_len
 	);
 
@@ -138,7 +138,7 @@ int write_to_udp_socket (int * const socket, void * data, size_t data_size, stru
 		data,
 		data_size,
 		MSG_CONFIRM,
-		address,
+		(const struct sockaddr *)address,
 		sizeof(*address)
 	);
 
