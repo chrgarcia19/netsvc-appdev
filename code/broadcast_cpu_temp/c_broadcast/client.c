@@ -112,13 +112,12 @@ int main(int argc, char** argv){
 		snprintf(msg, MAX_MSG_SIZE, "%lf", percent);
 		printf("[LOG] Current CPU usage is %.2lf%%\n", percent);
 
-		sendto(
-			client_socket,
+		read_from_udp_socket(
+			&client_socket,
 			msg,
 			strlen(msg),
-			MSG_CONFIRM,
 			&client_addr,
-			client_len
+			&client_len
 		);
 
 		memset(msg, 0, MAX_MSG_SIZE);

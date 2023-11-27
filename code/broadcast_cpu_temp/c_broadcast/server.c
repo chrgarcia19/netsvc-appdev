@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include <unistd.h>
 #include <string.h>
+#include <signal.h>
 // System includes
 #include <sys/time.h>
 #include <sys/socket.h>
@@ -19,12 +20,20 @@
 // Personal headers
 #include "networking.h"
 
+int close_server = 0;
+
 void error(char * msg){
 	perror(msg);
 	exit(EXIT_FAILURE);
 }
 
+void nice_close(int sig){
+	close_server = 1;
+	signal(sig, SIG_IGN);
+}
+
 int main(int argc, char** argv){
+	signal(SIGINT, nice_close);
 	if(argc > 3){
 		printf("[ERROR] Invalid number of arguments!\n");
 		if(DEBUG_STATEMENTS)
@@ -35,8 +44,6 @@ int main(int argc, char** argv){
 
 	int port = (argc > 1 ? atoi(argv[1]) : 0);
 	char * ip_addr = (argc > 2 ? argv[2] : NULL);
-
-	int close_server = 0;
 
 	int server_socket, new_client_socket, errval;
 	struct sockaddr_in server_addr, client_addr;
@@ -70,7 +77,6 @@ int main(int argc, char** argv){
 
 	printf("[LOG] Host is waiting for packets on port %d\n", port);
 	
-
 	while(!close_server){
 		
 	}
