@@ -53,7 +53,7 @@ int main(int argc, char** argv){
 	char * msg = (char *)malloc(MAX_MSG_SIZE);
 
 	memset(&server_addr, 0, sizeof(server_addr));
-	memset(&msg, 0, sizeof(MAX_MSG_SIZE));
+	memset(msg, 0, sizeof(MAX_MSG_SIZE));
 
 	srand(time(NULL));
 
