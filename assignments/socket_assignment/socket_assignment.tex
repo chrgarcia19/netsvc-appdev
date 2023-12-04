@@ -117,16 +117,6 @@
 	\vspace{72pt}
 	
 	\begin{lstlisting}
-		if (listen(*socket, 1) < 0) {
-			perror("The socket failed to listen!");
-			exit(EXIT_FAILURE);
-		}
-	\end{lstlisting}
-	
-	\subsubsection{What does it mean for a socket to listen to another socket?}
-	\vspace{72pt}
-	
-	\begin{lstlisting}
 		if (connect(*socket, (struct sockaddr *)&ip_addr, sizeof(ip_addr)) < 0) {
 			perror("The socket failed to connect!");
 			exit(EXIT_FAILURE);
