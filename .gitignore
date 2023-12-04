@@ -409,3 +409,8 @@ code/quote_of_the_day/cpp_client_server/client_server
 
 # Broadcast CPU Load
 code/broadcast_cpu_temp/cpp_broadcast/broadcast
+
+# Assignments
+assignments/socket_assignment/*.log
+assignments/socket_assignment/*.aux
+assignments/socket_assignment/*.*.gz
