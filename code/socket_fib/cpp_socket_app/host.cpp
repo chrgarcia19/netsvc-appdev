@@ -15,47 +15,47 @@ void run(int socket) {
 int main(int argc, char *argv[]) {
   int port, host_order;
   char *ip;
-  if (argc == 1) {
-    ip = NULL;
-    port = 0;
-    host_order = 1;
-  } else if (argc == 2) {
+  if (argc == 2) {
     ip = NULL;
     port = 0;
     host_order = atoi(argv[1]);
   } else if (argc == 3) {
-    ip = argv[1];
+    ip = NULL;
     port = atoi(argv[2]);
-    host_order = 1;
+    host_order = atoi(argv[1]);
   } else if (argc == 4) {
-    ip = argv[1];
+    ip = argv[3];
     port = atoi(argv[2]);
-    host_order = atoi(argv[3]);
+    host_order = atoi(argv[1]);
+  } else {
+    cout << "Command line arguments should be as follows: " << endl;
+    cout << "1 argument: ./host (1 or 2)" << endl;
+    cout << "2 arguments: ./host (1 or 2) (port number)" << endl;
+    cout << "3 arguments: ./host (1 or 2) (port number) (ip address)" << endl;
+    exit(EXIT_FAILURE);
   }
 
   srand((unsigned)time(NULL));
 
   int socket, fib_numb;
   struct sockaddr_in sock_addr;
-  socklen_t sock_len;
   bool read_index = true;
 
   if (host_order == 1) {
     socket = create_socket();
 
-    port = socket_setup(&sock_addr, ip, port);
+    port = socket_setup(&socket, &sock_addr, ip, port);
 
     bind_socket(&socket, sock_addr);
-    listen_to_socket(&socket, 1);
+    listen_socket(&socket);
 
     cout << "Host 1 is waiting for a connection on port " << port << endl;
 
-    sock_len = sizeof(sock_addr);
-    socket = accept(socket, (struct sockaddr *)&sock_addr, &sock_len);
+    accept_socket(&socket, sock_addr);
   } else if (host_order == 2) {
     socket = create_socket();
 
-    socket_setup(&sock_addr, ip, port);
+    socket_setup(&socket, &sock_addr, ip, port);
 
     connect_socket(&socket, sock_addr);
   }
@@ -82,6 +82,6 @@ int main(int argc, char *argv[]) {
     }
   }
 
-  close_one_socket(&socket);
+  close_socket(&socket);
   return 0;
 }
