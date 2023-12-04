@@ -1,0 +1,42 @@
+\documentclass{article}
+\title{Lab 2: Socket Programming - Implementing Networked Applications}
+\author{Christian Garcia}
+
+\begin{document}
+	\maketitle
+	
+	\begin{Huge}
+		\section{Questions}
+	\end{Huge}
+	
+	\begin{Large}
+		\subsection{\textbf{Using the skeleton code from the previous lab, create a single file in C or C++ that will allow a user to create 2 sockets and connect them.}}
+	\end{Large}
+	\textbf{HINT:} You will need to use command line arguments to properly initialize which socket is the "primary host" and "secondary host."
+	\linebreak{}
+	\textbf{HINT:} It is highly recommended that you place all your networking functions in a header (.h) file. 
+	\vspace{72pt}
+	
+	\begin{Large}
+		\subsection{\textbf{Using your newly acquired knowledge of exchanging information over sockets, write two methods (one to send, one to receive) integers over the network.}}
+	\end{Large}
+	\pagebreak{}
+	
+	\begin{Large}
+		\subsection{\textbf{Now that you have two sockets that are able to exchange data over the network, implement a function that calculates fibonacci. Use this to have the primary host send a fibonacci index to the secondary host and receive a fibonacci number from the secondary host.}}
+		\vspace{48pt}
+		
+		\textbf{The software shall...}
+		\subsubsection{Use a thread in the program}
+		\subsubsection{Have the primary host perform the following tasks...}
+		\begin{enumerate}
+			\item Send the fibonacci input to the secondary host
+			\item Receive the fibonacci result from the secondary host
+		\end{enumerate}
+		
+		\subsubsection{Have the secondary host perform the following tasks...}
+		\begin{enumerate}
+			\item Receive the fibonacci input from the primary host
+		\end{enumerate}
+	\end{Large}
+\end{document}

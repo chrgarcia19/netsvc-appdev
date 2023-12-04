@@ -414,3 +414,6 @@ code/broadcast_cpu_temp/cpp_broadcast/broadcast
 assignments/socket_assignment/*.log
 assignments/socket_assignment/*.aux
 assignments/socket_assignment/*.*.gz
+assignments/socket_programming_assignment/*.log
+assignments/socket_programming_assignment/*.aux
+assignments/socket_programming_assignment/*.*.gz
