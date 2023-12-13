@@ -420,3 +420,6 @@ assignments/socket_programming_assignment/*.*.gz
 assignments/client_server_assignment/*.log
 assignments/client_server_assignment/*.aux
 assignments/client_server_assignment/*.*.gz
+assignments/broadcast_assignment/*.log
+assignments/broadcast_assignment/*.aux
+assignments/broadcast_assignment/*.*.gz
