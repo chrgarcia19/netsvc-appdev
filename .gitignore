@@ -417,3 +417,6 @@ assignments/socket_assignment/*.*.gz
 assignments/socket_programming_assignment/*.log
 assignments/socket_programming_assignment/*.aux
 assignments/socket_programming_assignment/*.*.gz
+assignments/client_server_assignment/*.log
+assignments/client_server_assignment/*.aux
+assignments/client_server_assignment/*.*.gz
