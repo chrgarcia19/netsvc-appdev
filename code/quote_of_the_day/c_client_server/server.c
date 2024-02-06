@@ -58,7 +58,7 @@ int main(int argc, char** argv){
 	int close_server = 0;
 
 	int server_socket, new_client_socket, errval;
-	struct sockaddr_in server_addr, client_addr, new_addr;
+	struct sockaddr_in server_addr, 	, new_addr;
 	socklen_t addr_len, new_addr_len;
 	pid_t client_pid;
 
@@ -66,7 +66,7 @@ int main(int argc, char** argv){
 	char * msg = (char *)malloc(MAX_STR_SIZE);
 
 	memset(&server_addr, 0, sizeof(server_addr));
-	memset(&client_addr, 0, sizeof(client_addr));
+	memset(&	, 0, sizeof(	));
 	memset(&new_addr, 0, sizeof(new_addr));
 	memset(&msg, 0, sizeof(MAX_STR_SIZE));
 
