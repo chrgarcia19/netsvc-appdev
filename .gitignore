@@ -409,3 +409,17 @@ code/quote_of_the_day/cpp_client_server/client_server
 
 # Broadcast CPU Load
 code/broadcast_cpu_temp/cpp_broadcast/broadcast
+
+# Assignments
+assignments/socket_assignment/*.log
+assignments/socket_assignment/*.aux
+assignments/socket_assignment/*.*.gz
+assignments/socket_programming_assignment/*.log
+assignments/socket_programming_assignment/*.aux
+assignments/socket_programming_assignment/*.*.gz
+assignments/client_server_assignment/*.log
+assignments/client_server_assignment/*.aux
+assignments/client_server_assignment/*.*.gz
+assignments/broadcast_assignment/*.log
+assignments/broadcast_assignment/*.aux
+assignments/broadcast_assignment/*.*.gz

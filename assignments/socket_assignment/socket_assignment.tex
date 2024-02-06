@@ -1,0 +1,172 @@
+\documentclass{article}
+\title{Lab 1: Socket Programming - Understanding Networking Functions}
+\author{Christian Garcia}
+
+\usepackage{listings}
+\usepackage{color}
+\usepackage{xcolor}
+\usepackage[none]{hyphenat}
+
+\definecolor{dkgreen}{rgb}{0,0.6,0}
+\definecolor{gray}{rgb}{0.5,0.5,0.5}
+\definecolor{mauve}{rgb}{0.58,0,0.82}
+
+\lstset{frame=tb,
+	language=C++,
+	aboveskip=3mm,
+	belowskip=3mm,
+	showstringspaces=false,
+	columns=flexible,
+	basicstyle={\small\ttfamily},
+	numbers=none,
+	numberstyle=\tiny\color{gray},
+	keywordstyle=\color{red},
+	commentstyle=\color{dkgreen},
+	stringstyle=\color{blue},
+	identifierstyle=\color{mauve},
+	breaklines=true,
+	breakatwhitespace=true,
+	tabsize=3
+}
+
+\begin{document}
+	\maketitle
+	
+	%\vspace{24pt} % 2 lines
+	%\vspace{48pt} % 4 lines
+	%\vspace{72pt} % 6 lines
+	%\vspace{108pt} % 9 lines
+	%\vspace{144pt} % 12 lines
+	
+	\begin{Huge}
+		\section{Questions}
+	\end{Huge}
+	
+	
+	\begin{Large}
+		\subsection{\textbf{Creating a socket}}
+	\end{Large}
+	
+	\begin{lstlisting}
+		int new_socket;
+		if ((new_socket = socket(AF_INET, SOCK_STREAM, 0)) < 0) {
+			perror("The socket was failed to be created!");
+			exit(EXIT_FAILURE);
+		}		
+	\end{lstlisting}
+	The above code is used to create a new socket in C and C++. Using this sample code, determine...
+	\subsubsection{What does AF\_INET mean when creating a socket?}
+	\vspace{72pt}
+	\subsubsection{What does SOCK\_STREAM mean when creating a socket?}
+	
+	\pagebreak{}
+	
+	\begin{Large}
+		\subsection{\textbf{Setting a port number and IP address}}
+	\end{Large}
+	
+	\begin{lstlisting}
+		#define DEFAULT_PORT 4200
+		
+		socket_addr->sin_family = AF_INET;
+		if (port == 0) {
+			socket_addr->sin_port = htons(DEFAULT_PORT);
+			port = DEFAULT_PORT;
+		} else {
+			socket_addr->sin_port = htons(port);
+		}
+		if (ip != NULL) {
+			socket_addr->sin_addr.s_addr = inet_addr(ip);
+		} else {
+			socket_addr->sin_addr.s_addr = INADDR_ANY;
+		}
+	\end{lstlisting}
+	
+	The above code is used to assign an IP address and port number to the socket. 
+	
+	\subsubsection{What does htons do to a numeric value like a port number?}
+	\vspace{72pt}
+	\subsubsection{What does inet\_addr() do in the code?}
+	\vspace{72pt}
+	\subsubsection{What does INADDR\_ANY mean when setting up a socket?}
+	
+	\pagebreak{}
+	
+	
+	\begin{Large}
+		\subsection{\textbf{More Socket Operations}}
+	\end{Large}
+	
+	\begin{lstlisting}
+		if (bind(*socket, (struct sockaddr *)&addr, sizeof(addr)) < 0) {
+			perror("The socket failed to bind!");
+			exit(EXIT_FAILURE);
+		}
+	\end{lstlisting}
+	
+	\subsubsection{What does it mean for a socket to bind to another socket?}
+	\vspace{72pt}
+	
+	\begin{lstlisting}
+		if (listen(*socket, 1) < 0) {
+			perror("The socket failed to listen!");
+			exit(EXIT_FAILURE);
+		}
+	\end{lstlisting}
+	
+	\subsubsection{What does it mean for a socket to listen to another socket?}
+	\vspace{72pt}
+	
+	\begin{lstlisting}
+		if (connect(*socket, (struct sockaddr *)&ip_addr, sizeof(ip_addr)) < 0) {
+			perror("The socket failed to connect!");
+			exit(EXIT_FAILURE);
+		}
+	\end{lstlisting}
+	
+	\subsubsection{Although this one is fairly straightforward, please technically explain what it means for a socket to connect to another socket?}
+	\vspace{72pt}
+	
+	\begin{lstlisting}
+		socklen_t sock_len = sizeof(sock_addr);
+		if ((*socket = accept(*socket, (struct sockaddr *)&sock_addr, &sock_len)) <
+		0) {
+			perror("There was an error accepting a socket");
+			exit(EXIT_FAILURE);
+		}
+	\end{lstlisting}
+	
+	\subsubsection{What does it mean for a socket to accept another socket?}
+	\vspace{72pt}
+	
+	\begin{lstlisting}
+		 close(*socket);
+	\end{lstlisting}
+	
+	\subsubsection{Why is it important to close a socket when you are done using it?}
+	\vspace{72pt}
+	\pagebreak{}
+	
+	\begin{Large}
+		\subsection{\textbf{Reading and Writing Data Over the Network}}
+	\end{Large}
+	There are two primary methods of exchanging data over the network in C and C++. These methods are write()/read() and send()/recv(). Using online resources, please explain...
+	
+	\subsubsection{How do write() and read() exchange data over two sockets?}
+	\vspace{108pt}
+	
+	\subsubsection{How do send() and recv() exchange data over two sockets?}
+	\vspace{108pt}
+	
+	\subsubsection{After researching these two methods of exchanging data over the network, which one seems more reliable? Please explain your stance.}
+	\pagebreak{}
+	
+	\begin{Large}
+		\subsection{\textbf{Additional Questions}}
+	\end{Large}
+	
+	\subsubsection{Notice how the sample code contains an if statement comparing if the result of the function is less than 0. This is one of the main ways to perform error handling in C/C++. Why is error handling important when implementing a networked application?}
+	\vspace{108pt}
+	
+	
+\end{document}

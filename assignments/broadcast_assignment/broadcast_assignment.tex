@@ -1,0 +1,87 @@
+\documentclass{article}
+\title{Lab 4: Broadcast Programming}
+\author{Christian Garcia}
+
+\usepackage{listings}
+\usepackage{color}
+\usepackage{xcolor}
+\usepackage[none]{hyphenat}
+
+\definecolor{dkgreen}{rgb}{0,0.6,0}
+\definecolor{gray}{rgb}{0.5,0.5,0.5}
+\definecolor{mauve}{rgb}{0.58,0,0.82}
+
+\lstset{frame=tb,
+	language=C++,
+	aboveskip=3mm,
+	belowskip=3mm,
+	showstringspaces=false,
+	columns=flexible,
+	basicstyle={\small\ttfamily},
+	numbers=none,
+	numberstyle=\tiny\color{gray},
+	keywordstyle=\color{red},
+	commentstyle=\color{dkgreen},
+	stringstyle=\color{blue},
+	identifierstyle=\color{mauve},
+	breaklines=true,
+	breakatwhitespace=true,
+	tabsize=3
+}
+
+\begin{document}
+	\maketitle
+	
+	%\vspace{24pt} % 2 lines
+	%\vspace{48pt} % 4 lines
+	%\vspace{72pt} % 6 lines
+	%\vspace{108pt} % 9 lines
+	%\vspace{144pt} % 12 lines
+	
+	\begin{Huge}
+		\section{Questions}
+	\end{Huge}
+	
+	\begin{Large}
+		\subsection{\textbf{Creating a UDP socket}}
+	\end{Large}
+	
+	\begin{lstlisting}
+		if ((new_socket = socket(AF_INET, SOCK_DGRAM, 0)) < 0){
+			perror("Socket creation failed!");
+			exit(EXIT_FAILURE);
+		}	
+	\end{lstlisting}
+	
+	The above code is how you create a UDP socket in C/C++. While it looks eerily familiar to creating a TCP socket, there is a difference. 
+	
+	\subsubsection{What does SOCK\_DGRAM mean when creating a socket?}
+	\vspace{72pt}
+	
+	
+	\begin{Large}
+		\subsection{\textbf{Connecting UDP sockets}}
+	\end{Large}
+	
+	\subsubsection{Out of the connection functions shown in the TCP socket assignment, the only one required for a UDP socket is bind(). Why is this?}
+	\vspace{72pt}
+	\pagebreak
+	
+	\begin{Large}
+		\subsection{\textbf{Reading and Writing Data Over UDP Sockets}}
+	\end{Large}
+	
+	In C/C++, you can only use 2 functions to send and receive data over a UDP socket. These functions are sendto()/recvfrom(). 
+	
+	\subsubsection{How do sendto() and recvfrom() exchange data over two UDP sockets?}
+	\vspace{108pt}
+	
+	\begin{Large}
+		\subsection{\textbf{Creating a Broadcast Application}}
+	\end{Large}
+	
+	\subsubsection{Now that you know the differences between programming a TCP socket and a UDP socket, you will now create a broadcast program that will send the CPU usage percentage over the network in the language of YOUR choice.}
+	\textbf{HINT:} Modify your code from the previous labs to make your life less painful in this assignment.
+	
+	
+\end{document}

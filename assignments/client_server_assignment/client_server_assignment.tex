@@ -1,0 +1,50 @@
+\documentclass{article}
+\title{Lab 3: Programming a Client-Server Application}
+\author{Christian Garcia}
+
+\usepackage[none]{hyphenat}
+
+\begin{document}
+	\maketitle
+	
+	%\vspace{24pt} % 2 lines
+	%\vspace{48pt} % 4 lines
+	%\vspace{72pt} % 6 lines
+	%\vspace{108pt} % 9 lines
+	%\vspace{144pt} % 12 lines
+	
+	\begin{Huge}
+		\section{Questions}
+	\end{Huge}
+	
+	\begin{Large}
+		\subsection{\textbf{Client-Server vs. Socket Programming}}
+	\end{Large}
+	
+	Typically, migrating a program from a purely socket-socket model to a client-server model is fairly straightforward. However, different programming languages have different methods to achieve a properly working client-server program. 
+	\linebreak
+
+	\subsubsection{A widely used method to implement a client-server program is multithreading. Please explain how multithreading helps us achieve proper client-server functionality within an application.}
+	\pagebreak
+	\subsubsection{In C/C++, an alternative method to implement client-server functionality is to use fork(). Please explain how fork() helps us achieve client-server functionality within an application.}
+	\vspace{144pt}
+	\subsubsection{In C/C++, another potential method use to create a client-server program is select(). Please explain how select() allows us to achieve client-server functionality in an application.}
+	\pagebreak
+	
+	\begin{Large}
+		\subsection{\textbf{Creating a Client-Server Application}}
+	\end{Large}
+	
+	Before getting to the nitty gritty of programming a client-server application, some pre-requisite work must be done first...
+	\linebreak
+	\linebreak
+	This program is a quote of the day (QOTD) program. The server will hold the data that will be sent to the client(s). 
+	
+	\subsubsection{In the language of your choice, start by reading the CSV file and storing it in some type of data structure (array, hash table, etc.).}
+	\vspace{24pt}
+	\subsubsection{After reading and storing the data, create a function to parse through each entry in the data structure and properly obtain the quote, the date, and the author.}
+	\vspace{24pt}
+	\subsubsection{Now that the data handling is finished, produce two pieces of code. One set of code should prompt a user to select Q (Quote), D (Date), A(Author), R(All Available Data), N (New Quote), and E (End Program). The other set of code should handle what occurs based on the user input.}
+	\vspace{24pt}
+	\subsubsection{Since you have a skeleton for the QOTD program, make it work over the network with the client-server model. *HINT: reference your code from the socket fibonacci assignment.}
+\end{document}
